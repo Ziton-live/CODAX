@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+#bpf compiled output
+src/_monitor/build/*
