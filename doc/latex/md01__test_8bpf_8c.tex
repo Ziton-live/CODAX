@@ -1,0 +1,213 @@
+\hypertarget{md01__test_8bpf_8c}{}\doxysection{src/\+\_\+monitor/md01\+\_\+test.bpf.\+c File Reference}
+\label{md01__test_8bpf_8c}\index{src/\_monitor/md01\_test.bpf.c@{src/\_monitor/md01\_test.bpf.c}}
+{\ttfamily \#include \char`\"{}vmlinux.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$bpf/bpf\+\_\+helpers.\+h$>$}\newline
+{\ttfamily \#include $<$bpf/bpf\+\_\+tracing.\+h$>$}\newline
+{\ttfamily \#include $<$bpf/bpf\+\_\+core\+\_\+read.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}md01\+\_\+test.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char LICENSE\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{md01__test_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}{SEC}} (\char`\"{}license\char`\"{})
+\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\} \mbox{\hyperlink{md01__test_8bpf_8c_a808534f7d13e21b9c882f76b8c0194fc}{SEC}} (\char`\"{}.maps\char`\"{})\\
+
+\end{tabbing}\item 
+\mbox{\hyperlink{md01__test_8bpf_8c_a4af39ef08900aec86b3f88f75aedc6e2}{\+\_\+\+\_\+uint}} (type, BPF\+\_\+\+MAP\+\_\+\+TYPE\+\_\+\+HASH)
+\item 
+\mbox{\hyperlink{md01__test_8bpf_8c_a0478e3b0cb8f74ba4578718bde938b39}{\+\_\+\+\_\+uint}} (max\+\_\+entries, 8192)
+\item 
+\mbox{\hyperlink{md01__test_8bpf_8c_a62635c980aa8cab3aa284175166f142f}{\+\_\+\+\_\+type}} (key, pid\+\_\+t)
+\item 
+\mbox{\hyperlink{md01__test_8bpf_8c_ae225703dfea010801f8bd4a85b56fac9}{\+\_\+\+\_\+type}} (value, u64)
+\item 
+\mbox{\hyperlink{md01__test_8bpf_8c_a30d6e774307df1740ef4dbd9172a164a}{\+\_\+\+\_\+uint}} (type, BPF\+\_\+\+MAP\+\_\+\+TYPE\+\_\+\+RINGBUF)
+\item 
+\mbox{\hyperlink{md01__test_8bpf_8c_a426c062cff7560bd875590fc1cac6237}{\+\_\+\+\_\+uint}} (max\+\_\+entries, 256 $\ast$1024)
+\item 
+int \mbox{\hyperlink{md01__test_8bpf_8c_a33d8306c21e04f61a95782c96bff1ec0}{handle\+\_\+exec}} (struct trace\+\_\+event\+\_\+raw\+\_\+sched\+\_\+process\+\_\+exec $\ast$ctx)
+\item 
+int \mbox{\hyperlink{md01__test_8bpf_8c_aa7664c2099745e18ea926bc1722de3ee}{handle\+\_\+exit}} (struct trace\+\_\+event\+\_\+raw\+\_\+sched\+\_\+process\+\_\+template $\ast$ctx)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const volatile unsigned long long \mbox{\hyperlink{md01__test_8bpf_8c_a898ec4fe28907d4b2ba5708db2553dd6}{min\+\_\+duration\+\_\+ns}} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{md01__test_8bpf_8c_a62635c980aa8cab3aa284175166f142f}\label{md01__test_8bpf_8c_a62635c980aa8cab3aa284175166f142f}} 
+\index{md01\_test.bpf.c@{md01\_test.bpf.c}!\_\_type@{\_\_type}}
+\index{\_\_type@{\_\_type}!md01\_test.bpf.c@{md01\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{\_\_type()}{\_\_type()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily @0\+::\+\_\+\+\_\+type (\begin{DoxyParamCaption}\item[{key}]{,  }\item[{pid\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md01__test_8bpf_8c_ae225703dfea010801f8bd4a85b56fac9}\label{md01__test_8bpf_8c_ae225703dfea010801f8bd4a85b56fac9}} 
+\index{md01\_test.bpf.c@{md01\_test.bpf.c}!\_\_type@{\_\_type}}
+\index{\_\_type@{\_\_type}!md01\_test.bpf.c@{md01\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{\_\_type()}{\_\_type()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily @0\+::\+\_\+\+\_\+type (\begin{DoxyParamCaption}\item[{value}]{,  }\item[{u64}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md01__test_8bpf_8c_a426c062cff7560bd875590fc1cac6237}\label{md01__test_8bpf_8c_a426c062cff7560bd875590fc1cac6237}} 
+\index{md01\_test.bpf.c@{md01\_test.bpf.c}!\_\_uint@{\_\_uint}}
+\index{\_\_uint@{\_\_uint}!md01\_test.bpf.c@{md01\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{\_\_uint()}{\_\_uint()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily @1\+::\+\_\+\+\_\+uint (\begin{DoxyParamCaption}\item[{max\+\_\+entries}]{,  }\item[{256 $\ast$}]{1024 }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md01__test_8bpf_8c_a0478e3b0cb8f74ba4578718bde938b39}\label{md01__test_8bpf_8c_a0478e3b0cb8f74ba4578718bde938b39}} 
+\index{md01\_test.bpf.c@{md01\_test.bpf.c}!\_\_uint@{\_\_uint}}
+\index{\_\_uint@{\_\_uint}!md01\_test.bpf.c@{md01\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{\_\_uint()}{\_\_uint()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily @2\+::\+\_\+\+\_\+uint (\begin{DoxyParamCaption}\item[{max\+\_\+entries}]{,  }\item[{8192}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md01__test_8bpf_8c_a4af39ef08900aec86b3f88f75aedc6e2}\label{md01__test_8bpf_8c_a4af39ef08900aec86b3f88f75aedc6e2}} 
+\index{md01\_test.bpf.c@{md01\_test.bpf.c}!\_\_uint@{\_\_uint}}
+\index{\_\_uint@{\_\_uint}!md01\_test.bpf.c@{md01\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{\_\_uint()}{\_\_uint()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily @2\+::\+\_\+\+\_\+uint (\begin{DoxyParamCaption}\item[{type}]{,  }\item[{BPF\+\_\+\+MAP\+\_\+\+TYPE\+\_\+\+HASH}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md01__test_8bpf_8c_a30d6e774307df1740ef4dbd9172a164a}\label{md01__test_8bpf_8c_a30d6e774307df1740ef4dbd9172a164a}} 
+\index{md01\_test.bpf.c@{md01\_test.bpf.c}!\_\_uint@{\_\_uint}}
+\index{\_\_uint@{\_\_uint}!md01\_test.bpf.c@{md01\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{\_\_uint()}{\_\_uint()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily @1\+::\+\_\+\+\_\+uint (\begin{DoxyParamCaption}\item[{type}]{,  }\item[{BPF\+\_\+\+MAP\+\_\+\+TYPE\+\_\+\+RINGBUF}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md01__test_8bpf_8c_a33d8306c21e04f61a95782c96bff1ec0}\label{md01__test_8bpf_8c_a33d8306c21e04f61a95782c96bff1ec0}} 
+\index{md01\_test.bpf.c@{md01\_test.bpf.c}!handle\_exec@{handle\_exec}}
+\index{handle\_exec@{handle\_exec}!md01\_test.bpf.c@{md01\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{handle\_exec()}{handle\_exec()}}
+{\footnotesize\ttfamily int handle\+\_\+exec (\begin{DoxyParamCaption}\item[{struct trace\+\_\+event\+\_\+raw\+\_\+sched\+\_\+process\+\_\+exec $\ast$}]{ctx }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{md01__test_8bpf_8c_source_l00025}{25}} of file \mbox{\hyperlink{md01__test_8bpf_8c_source}{md01\+\_\+test.\+bpf.\+c}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00026\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{struct\ }task\_struct\ *task;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ fname\_off;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structevent}{event}}\ *e;}
+\DoxyCodeLine{00030\ \ \ \ \ pid\_t\ \mbox{\hyperlink{structevent_a17dfdcf290911e8c058e8bd725543c01}{pid}};}
+\DoxyCodeLine{00031\ \ \ \ \ u64\ ts;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{/*\ remember\ time\ exec()\ was\ executed\ for\ this\ PID\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{structevent_a17dfdcf290911e8c058e8bd725543c01}{pid}}\ =\ bpf\_get\_current\_pid\_tgid()\ >>\ 32;}
+\DoxyCodeLine{00035\ \ \ \ \ ts\ =\ bpf\_ktime\_get\_ns();}
+\DoxyCodeLine{00036\ \ \ \ \ bpf\_map\_update\_elem(\&exec\_start,\ \&\mbox{\hyperlink{structevent_a17dfdcf290911e8c058e8bd725543c01}{pid}},\ \&ts,\ BPF\_ANY);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{/*\ don't\ emit\ exec\ events\ when\ minimum\ duration\ is\ specified\ */}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{md01__test_8bpf_8c_a898ec4fe28907d4b2ba5708db2553dd6}{min\_duration\_ns}})}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{comment}{/*\ reserve\ sample\ from\ BPF\ ringbuf\ */}}
+\DoxyCodeLine{00043\ \ \ \ \ e\ =\ bpf\_ringbuf\_reserve(\&rb,\ \textcolor{keyword}{sizeof}(*e),\ 0);}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{if}\ (!e)}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{/*\ fill\ out\ the\ sample\ with\ data\ */}}
+\DoxyCodeLine{00048\ \ \ \ \ task\ =\ (\textcolor{keyword}{struct\ }task\_struct\ *)bpf\_get\_current\_task();}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ e-\/>\mbox{\hyperlink{structevent_ac334e14ef8cb3c12f5a7d0b32b49d137}{exit\_event}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00051\ \ \ \ \ e-\/>\mbox{\hyperlink{structevent_a17dfdcf290911e8c058e8bd725543c01}{pid}}\ =\ pid;}
+\DoxyCodeLine{00052\ \ \ \ \ e-\/>\mbox{\hyperlink{structevent_aa89478045b20dd554ee80151136cbcb0}{ppid}}\ =\ BPF\_CORE\_READ(task,\ real\_parent,\ tgid);}
+\DoxyCodeLine{00053\ \ \ \ \ bpf\_get\_current\_comm(\&e-\/>\mbox{\hyperlink{structevent_a60db55f80d8f2b7649133ad0e37d1392}{comm}},\ \textcolor{keyword}{sizeof}(e-\/>\mbox{\hyperlink{structevent_a60db55f80d8f2b7649133ad0e37d1392}{comm}}));}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ fname\_off\ =\ ctx-\/>\_\_data\_loc\_filename\ \&\ 0xFFFF;}
+\DoxyCodeLine{00056\ \ \ \ \ bpf\_probe\_read\_str(\&e-\/>\mbox{\hyperlink{structevent_acd81845e86736ec19fdb512a0952801d}{filename}},\ \textcolor{keyword}{sizeof}(e-\/>\mbox{\hyperlink{structevent_acd81845e86736ec19fdb512a0952801d}{filename}}),\ (\textcolor{keywordtype}{void}\ *)ctx\ +\ fname\_off);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{comment}{/*\ successfully\ submit\ it\ to\ user-\/space\ for\ post-\/processing\ */}}
+\DoxyCodeLine{00059\ \ \ \ \ bpf\_ringbuf\_submit(e,\ 0);}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00061\ \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{md01__test_8bpf_8c_aa7664c2099745e18ea926bc1722de3ee}\label{md01__test_8bpf_8c_aa7664c2099745e18ea926bc1722de3ee}} 
+\index{md01\_test.bpf.c@{md01\_test.bpf.c}!handle\_exit@{handle\_exit}}
+\index{handle\_exit@{handle\_exit}!md01\_test.bpf.c@{md01\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{handle\_exit()}{handle\_exit()}}
+{\footnotesize\ttfamily int handle\+\_\+exit (\begin{DoxyParamCaption}\item[{struct trace\+\_\+event\+\_\+raw\+\_\+sched\+\_\+process\+\_\+template $\ast$}]{ctx }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{md01__test_8bpf_8c_source_l00064}{64}} of file \mbox{\hyperlink{md01__test_8bpf_8c_source}{md01\+\_\+test.\+bpf.\+c}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00065\ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{struct\ }task\_struct\ *task;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structevent}{event}}\ *e;}
+\DoxyCodeLine{00068\ \ \ \ \ pid\_t\ \mbox{\hyperlink{structevent_a17dfdcf290911e8c058e8bd725543c01}{pid}},\ tid;}
+\DoxyCodeLine{00069\ \ \ \ \ u64\ id,\ ts,\ *start\_ts,\ \mbox{\hyperlink{structevent_a8b237a49c60868f7ac946af7dbe823f2}{duration\_ns}}\ =\ 0;}
+\DoxyCodeLine{00070\ \ \ \ \ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{/*\ get\ PID\ and\ TID\ of\ exiting\ thread/process\ */}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{id}\ =\ bpf\_get\_current\_pid\_tgid();}
+\DoxyCodeLine{00073\ \ \ \ \ \mbox{\hyperlink{structevent_a17dfdcf290911e8c058e8bd725543c01}{pid}}\ =\ \textcolor{keywordtype}{id}\ >>\ 32;}
+\DoxyCodeLine{00074\ \ \ \ \ tid\ =\ (u32)\textcolor{keywordtype}{id};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{/*\ ignore\ thread\ exits\ */}}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{structevent_a17dfdcf290911e8c058e8bd725543c01}{pid}}\ !=\ tid)}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{comment}{/*\ if\ we\ recorded\ start\ of\ the\ process,\ calculate\ lifetime\ duration\ */}}
+\DoxyCodeLine{00081\ \ \ \ \ start\_ts\ =\ bpf\_map\_lookup\_elem(\&exec\_start,\ \&\mbox{\hyperlink{structevent_a17dfdcf290911e8c058e8bd725543c01}{pid}});}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordflow}{if}\ (start\_ts)}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structevent_a8b237a49c60868f7ac946af7dbe823f2}{duration\_ns}}\ =\ bpf\_ktime\_get\_ns()\ -\/\ *start\_ts;}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{md01__test_8bpf_8c_a898ec4fe28907d4b2ba5708db2553dd6}{min\_duration\_ns}})}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00086\ \ \ \ \ bpf\_map\_delete\_elem(\&exec\_start,\ \&\mbox{\hyperlink{structevent_a17dfdcf290911e8c058e8bd725543c01}{pid}});}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{comment}{/*\ if\ process\ didn't\ live\ long\ enough,\ return\ early\ */}}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{md01__test_8bpf_8c_a898ec4fe28907d4b2ba5708db2553dd6}{min\_duration\_ns}}\ \&\&\ \mbox{\hyperlink{structevent_a8b237a49c60868f7ac946af7dbe823f2}{duration\_ns}}\ <\ \mbox{\hyperlink{md01__test_8bpf_8c_a898ec4fe28907d4b2ba5708db2553dd6}{min\_duration\_ns}})}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{/*\ reserve\ sample\ from\ BPF\ ringbuf\ */}}
+\DoxyCodeLine{00093\ \ \ \ \ e\ =\ bpf\_ringbuf\_reserve(\&rb,\ \textcolor{keyword}{sizeof}(*e),\ 0);}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordflow}{if}\ (!e)}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{comment}{/*\ fill\ out\ the\ sample\ with\ data\ */}}
+\DoxyCodeLine{00098\ \ \ \ \ task\ =\ (\textcolor{keyword}{struct\ }task\_struct\ *)bpf\_get\_current\_task();}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ e-\/>\mbox{\hyperlink{structevent_ac334e14ef8cb3c12f5a7d0b32b49d137}{exit\_event}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00101\ \ \ \ \ e-\/>\mbox{\hyperlink{structevent_a8b237a49c60868f7ac946af7dbe823f2}{duration\_ns}}\ =\ duration\_ns;}
+\DoxyCodeLine{00102\ \ \ \ \ e-\/>\mbox{\hyperlink{structevent_a17dfdcf290911e8c058e8bd725543c01}{pid}}\ =\ pid;}
+\DoxyCodeLine{00103\ \ \ \ \ e-\/>\mbox{\hyperlink{structevent_aa89478045b20dd554ee80151136cbcb0}{ppid}}\ =\ BPF\_CORE\_READ(task,\ real\_parent,\ tgid);}
+\DoxyCodeLine{00104\ \ \ \ \ e-\/>\mbox{\hyperlink{structevent_a9ce4d7922fdeff0082218eb418e937b1}{exit\_code}}\ =\ (BPF\_CORE\_READ(task,\ exit\_code)\ >>\ 8)\ \&\ 0xff;}
+\DoxyCodeLine{00105\ \ \ \ \ bpf\_get\_current\_comm(\&e-\/>\mbox{\hyperlink{structevent_a60db55f80d8f2b7649133ad0e37d1392}{comm}},\ \textcolor{keyword}{sizeof}(e-\/>\mbox{\hyperlink{structevent_a60db55f80d8f2b7649133ad0e37d1392}{comm}}));}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{comment}{/*\ send\ data\ to\ user-\/space\ for\ post-\/processing\ */}}
+\DoxyCodeLine{00108\ \ \ \ \ bpf\_ringbuf\_submit(e,\ 0);}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00110\ \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{md01__test_8bpf_8c_a808534f7d13e21b9c882f76b8c0194fc}\label{md01__test_8bpf_8c_a808534f7d13e21b9c882f76b8c0194fc}} 
+\index{md01\_test.bpf.c@{md01\_test.bpf.c}!SEC@{SEC}}
+\index{SEC@{SEC}!md01\_test.bpf.c@{md01\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{SEC()}{SEC()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily struct @1 SEC (\begin{DoxyParamCaption}\item[{\char`\"{}.maps\char`\"{}}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md01__test_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}\label{md01__test_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}} 
+\index{md01\_test.bpf.c@{md01\_test.bpf.c}!SEC@{SEC}}
+\index{SEC@{SEC}!md01\_test.bpf.c@{md01\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{SEC()}{SEC()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily char LICENSE\mbox{[}$\,$\mbox{]} SEC (\begin{DoxyParamCaption}\item[{\char`\"{}license\char`\"{}}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{md01__test_8bpf_8c_a898ec4fe28907d4b2ba5708db2553dd6}\label{md01__test_8bpf_8c_a898ec4fe28907d4b2ba5708db2553dd6}} 
+\index{md01\_test.bpf.c@{md01\_test.bpf.c}!min\_duration\_ns@{min\_duration\_ns}}
+\index{min\_duration\_ns@{min\_duration\_ns}!md01\_test.bpf.c@{md01\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{min\_duration\_ns}{min\_duration\_ns}}
+{\footnotesize\ttfamily const volatile unsigned long long min\+\_\+duration\+\_\+ns = 0}
+
+
+
+Definition at line \mbox{\hyperlink{md01__test_8bpf_8c_source_l00022}{22}} of file \mbox{\hyperlink{md01__test_8bpf_8c_source}{md01\+\_\+test.\+bpf.\+c}}.
+

@@ -1,0 +1,44 @@
+\hypertarget{kprobe_8bpf_8c}{}\doxysection{src/\+\_\+monitor/kprobe.bpf.\+c File Reference}
+\label{kprobe_8bpf_8c}\index{src/\_monitor/kprobe.bpf.c@{src/\_monitor/kprobe.bpf.c}}
+{\ttfamily \#include $<$linux/bpf.\+h$>$}\newline
+{\ttfamily \#include $<$linux/version.\+h$>$}\newline
+{\ttfamily \#include $<$bpf/bpf\+\_\+helpers.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char LICENSE\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{kprobe_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}{SEC}} (\char`\"{}license\char`\"{})
+\item 
+int \mbox{\hyperlink{kprobe_8bpf_8c_ae9f7611d1afe41f95392c5cdbfb9a3bd}{bpf\+\_\+prog}} (struct pt\+\_\+regs $\ast$ctx)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{kprobe_8bpf_8c_ae9f7611d1afe41f95392c5cdbfb9a3bd}\label{kprobe_8bpf_8c_ae9f7611d1afe41f95392c5cdbfb9a3bd}} 
+\index{kprobe.bpf.c@{kprobe.bpf.c}!bpf\_prog@{bpf\_prog}}
+\index{bpf\_prog@{bpf\_prog}!kprobe.bpf.c@{kprobe.bpf.c}}
+\doxysubsubsection{\texorpdfstring{bpf\_prog()}{bpf\_prog()}}
+{\footnotesize\ttfamily int bpf\+\_\+prog (\begin{DoxyParamCaption}\item[{struct pt\+\_\+regs $\ast$}]{ctx }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{kprobe_8bpf_8c_source_l00024}{24}} of file \mbox{\hyperlink{kprobe_8bpf_8c_source}{kprobe.\+bpf.\+c}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{//\ struct\ sock\ *sk\ =\ (struct\ sock\ *)PT\_REGS\_PARM1(ctx);}}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{//\ if\ (sk-\/>sk\_family\ ==\ AF\_INET)\ \{}}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{int}\ pid\ =\ bpf\_get\_current\_pid\_tgid()\ >>\ 32;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{int}\ fd\ =\ 0;}
+\DoxyCodeLine{00030\ \ \ \ \ bpf\_printk(\textcolor{stringliteral}{"{}BPF\ triggered\ from\ PID\ \%d.\(\backslash\)n"{}},\ pid);}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{//\ bpf\_map\_update\_elem(\&pid\_map,\ \&fd,\ \&pid,\ BPF\_ANY);}}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00033\ \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{kprobe_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}\label{kprobe_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}} 
+\index{kprobe.bpf.c@{kprobe.bpf.c}!SEC@{SEC}}
+\index{SEC@{SEC}!kprobe.bpf.c@{kprobe.bpf.c}}
+\doxysubsubsection{\texorpdfstring{SEC()}{SEC()}}
+{\footnotesize\ttfamily char LICENSE\mbox{[}$\,$\mbox{]} SEC (\begin{DoxyParamCaption}\item[{\char`\"{}license\char`\"{}}]{ }\end{DoxyParamCaption})}
+

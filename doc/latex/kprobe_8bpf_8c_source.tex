@@ -1,0 +1,59 @@
+\hypertarget{kprobe_8bpf_8c_source}{}\doxysection{kprobe.\+bpf.\+c}
+\label{kprobe_8bpf_8c_source}\index{src/\_monitor/kprobe.bpf.c@{src/\_monitor/kprobe.bpf.c}}
+\mbox{\hyperlink{kprobe_8bpf_8c}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00004}00004\ }
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <linux/bpf.h>}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00006}00006\ \textcolor{preprocessor}{\#include\ <linux/version.h>}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00007}00007\ \textcolor{preprocessor}{\#include\ <bpf/bpf\_helpers.h>}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00008}00008\ \textcolor{comment}{//\ \#include\ "{}net/sock.h"{}}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00009}\mbox{\hyperlink{kprobe_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}{00009}}\ \textcolor{keywordtype}{char}\ LICENSE[]\ \mbox{\hyperlink{kprobe_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}{SEC}}(\textcolor{stringliteral}{"{}license"{}})\ =\ \textcolor{stringliteral}{"{}Dual\ BSD/GPL"{}};}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00010}00010\ }
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00012}00012\ \textcolor{comment}{//\ struct\ \{}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00013}00013\ \textcolor{comment}{//\ \ \_\_uint(type,\ BPF\_MAP\_TYPE\_HASH);}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00014}00014\ \textcolor{comment}{//\ \ \_\_uint(max\_entries,\ 8192);}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00015}00015\ \textcolor{comment}{//\ \ \_\_type(key,\ int);}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00016}00016\ \textcolor{comment}{//\ \ \_\_type(value,\ int);}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00017}00017\ \textcolor{comment}{//\ \}\ pid\_map\ SEC("{}.maps"{});}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00018}00018\ }
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00019}00019\ \textcolor{comment}{//\ To\ trace\ all\ system\ calls\ in\ TCP}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00020}00020\ \textcolor{comment}{//\ SEC("{}kprobe/\_\_x64\_sys\_accept"{})\ for\ lo}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00022}00022\ \textcolor{comment}{//\ SEC("{}kprobe/tcp\_v4\_do\_rcv"{})}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00023}00023\ \mbox{\hyperlink{kprobe_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}{SEC}}(\textcolor{stringliteral}{"{}kprobe/\_\_x64\_sys\_accept"{}})}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00024}\mbox{\hyperlink{kprobe_8bpf_8c_ae9f7611d1afe41f95392c5cdbfb9a3bd}{00024}}\ int\ \mbox{\hyperlink{kprobe_8bpf_8c_ae9f7611d1afe41f95392c5cdbfb9a3bd}{bpf\_prog}}(struct\ pt\_regs\ *ctx)}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00025}00025\ \{}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00026}00026\ \ \ \ \ \textcolor{comment}{//\ struct\ sock\ *sk\ =\ (struct\ sock\ *)PT\_REGS\_PARM1(ctx);}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00027}00027\ \ \ \ \ \textcolor{comment}{//\ if\ (sk-\/>sk\_family\ ==\ AF\_INET)\ \{}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00028}00028\ \ \ \ \ \textcolor{keywordtype}{int}\ pid\ =\ bpf\_get\_current\_pid\_tgid()\ >>\ 32;}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00029}00029\ \ \ \ \ \textcolor{keywordtype}{int}\ fd\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00030}00030\ \ \ \ \ bpf\_printk(\textcolor{stringliteral}{"{}BPF\ triggered\ from\ PID\ \%d.\(\backslash\)n"{}},\ pid);}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00031}00031\ \ \ \ \ \textcolor{comment}{//\ bpf\_map\_update\_elem(\&pid\_map,\ \&fd,\ \&pid,\ BPF\_ANY);}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00032}00032\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00033}00033\ \}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00035}00035\ \textcolor{comment}{//\ SEC("{}kprobe/tcp\_v6\_do\_rcv"{})}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00036}00036\ \textcolor{comment}{//\ int\ bpf\_prog\_v6(struct\ pt\_regs\ *ctx)}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00037}00037\ \textcolor{comment}{//\ \{}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00038}00038\ \textcolor{comment}{//\ \ \ \ \ //\ struct\ sock\ *sk\ =\ (struct\ sock\ *)PT\_REGS\_PARM1(ctx);}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00039}00039\ \textcolor{comment}{//\ \ \ \ \ //\ if\ (sk-\/>sk\_family\ ==\ AF\_INET6)\ \{}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00040}00040\ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ bpf\_trace\_printk("{}hello\ world\ TCP\ V6\(\backslash\)n"{});}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00041}00041\ \textcolor{comment}{//\ \ \ \ \ //\ \}}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00042}00042\ \textcolor{comment}{//\ \ \ \ \ return\ 0;}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00043}00043\ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00044}00044\ }
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00045}00045\ \textcolor{comment}{//\ TCP\ close\ system\ call\ called}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00046}00046\ \textcolor{comment}{//\ SEC("{}kprobe/tcp\_close"{})}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00047}00047\ \textcolor{comment}{//\ int\ bpf\_prog(struct\ pt\_regs\ *ctx)}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00048}00048\ \textcolor{comment}{//\ \{}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00049}00049\ \textcolor{comment}{//\ \ \ \ \ bpf\_trace\_printk("{}tcp\_close\ called\(\backslash\)n"{});}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00050}00050\ \textcolor{comment}{//\ \ \ \ \ return\ 0;}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00051}00051\ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{kprobe_8bpf_8c_source_l00053}00053\ }
+
+\end{DoxyCode}

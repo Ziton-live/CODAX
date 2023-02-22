@@ -1,0 +1,71 @@
+\hypertarget{md02__test_8c}{}\doxysection{src/\+\_\+monitor/md02\+\_\+test.c File Reference}
+\label{md02__test_8c}\index{src/\_monitor/md02\_test.c@{src/\_monitor/md02\_test.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$signal.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$sys/resource.\+h$>$}\newline
+{\ttfamily \#include $<$bpf/libbpf.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}kprobe.\+skel.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{md02__test_8c_a3c04138a5bfe5d72780bb7e82a18e627}{main}} (int argc, char $\ast$$\ast$argv)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{md02__test_8c_a3c04138a5bfe5d72780bb7e82a18e627}\label{md02__test_8c_a3c04138a5bfe5d72780bb7e82a18e627}} 
+\index{md02\_test.c@{md02\_test.c}!main@{main}}
+\index{main@{main}!md02\_test.c@{md02\_test.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$$\ast$}]{argv }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{md02__test_8c_source_l00022}{22}} of file \mbox{\hyperlink{md02__test_8c_source}{md02\+\_\+test.\+c}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{struct\ }kprobe\_bpf\ *skel;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{int}\ err;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ libbpf\_set\_strict\_mode(LIBBPF\_STRICT\_ALL);}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{comment}{/*\ Set\ up\ libbpf\ errors\ and\ debug\ info\ callback\ */}}
+\DoxyCodeLine{00029\ \ \ \ \ libbpf\_set\_print(libbpf\_print\_fn);}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{/*\ Open\ load\ and\ verify\ BPF\ application\ */}}
+\DoxyCodeLine{00032\ \ \ \ \ skel\ =\ kprobe\_bpf\_\_open\_and\_load();}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordflow}{if}\ (!skel)\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Failed\ to\ open\ BPF\ skeleton\(\backslash\)n"{}});}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{/*\ Attach\ tracepoint\ handler\ */}}
+\DoxyCodeLine{00039\ \ \ \ \ err\ =\ kprobe\_bpf\_\_attach(skel);}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordflow}{if}\ (err)\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Failed\ to\ attach\ BPF\ skeleton\(\backslash\)n"{}});}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{goto}\ cleanup;}
+\DoxyCodeLine{00043\ \ \ \ \ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordflow}{if}\ (signal(SIGINT,\ sig\_int)\ ==\ SIG\_ERR)\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}can't\ set\ signal\ handler:\ \%s\(\backslash\)n"{}},\ strerror(errno));}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{goto}\ cleanup;}
+\DoxyCodeLine{00048\ \ \ \ \ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Successfully\ started!\ Please\ run\ `sudo\ cat\ /sys/kernel/debug/tracing/trace\_pipe`\ "{}}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}to\ see\ output\ of\ the\ BPF\ programs.\(\backslash\)n"{}});}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{while}\ (!stop)\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}."{}});}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ sleep(1);}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ cleanup:}
+\DoxyCodeLine{00059\ \ \ \ \ kprobe\_bpf\_\_destroy(skel);}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/err;}
+\DoxyCodeLine{00061\ \}}
+
+\end{DoxyCode}

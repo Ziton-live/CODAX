@@ -1,0 +1,23 @@
+\hypertarget{test_8py_source}{}\doxysection{test.\+py}
+\label{test_8py_source}\index{src/\_monitor/test.py@{src/\_monitor/test.py}}
+\mbox{\hyperlink{test_8py}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00001}\mbox{\hyperlink{namespacetest}{00001}}\ \textcolor{keyword}{import}\ socket}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00003}00003\ \textcolor{comment}{\#\ create\ a\ TCP\ socket}}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00004}\mbox{\hyperlink{namespacetest_a4db3e14324cf16cd34f19755891c7e57}{00004}}\ s\ =\ socket.socket(socket.AF\_INET,\ socket.SOCK\_STREAM)}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00006}00006\ \textcolor{comment}{\#\ connect\ to\ google.com\ on\ port\ 80}}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00007}00007\ s.connect((\textcolor{stringliteral}{'www.google.com'},\ 80))}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00009}00009\ \textcolor{comment}{\#\ send\ an\ HTTP\ request}}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00010}00010\ s.send(b\textcolor{stringliteral}{"{}GET\ /\ HTTP/1.1\(\backslash\)r\(\backslash\)nHost:\ www.google.com\(\backslash\)r\(\backslash\)n\(\backslash\)r\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00012}00012\ \textcolor{comment}{\#\ receive\ the\ response}}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00013}\mbox{\hyperlink{namespacetest_ae0b41ba9abfb2537695aec73b457d384}{00013}}\ response\ =\ s.recv(1024)}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00014}00014\ print(response)}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00016}00016\ \textcolor{comment}{\#\ close\ the\ connection}}
+\DoxyCodeLine{\Hypertarget{test_8py_source_l00017}00017\ s.close()}
+
+\end{DoxyCode}

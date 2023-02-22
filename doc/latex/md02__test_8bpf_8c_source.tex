@@ -1,0 +1,58 @@
+\hypertarget{md02__test_8bpf_8c_source}{}\doxysection{md02\+\_\+test.\+bpf.\+c}
+\label{md02__test_8bpf_8c_source}\index{src/\_monitor/md02\_test.bpf.c@{src/\_monitor/md02\_test.bpf.c}}
+\mbox{\hyperlink{md02__test_8bpf_8c}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00001}\mbox{\hyperlink{md02__test_8bpf_8c_af814f4e6d8e12e4f80b03046ca0f1dbc}{00001}}\ }
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00002}\mbox{\hyperlink{md02__test_8bpf_8c_ae37cb4895b155eac6b97f0a1e091b744}{00002}}\ \textcolor{preprocessor}{\#include\ "{}vmlinux.h"{}}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00003}\mbox{\hyperlink{md02__test_8bpf_8c_a685c38304501244fe08a3005ada53b80}{00003}}\ \textcolor{preprocessor}{\#include\ <bpf/bpf\_helpers.h>}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <bpf/bpf\_tracing.h>}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <bpf/bpf\_core\_read.h>}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00006}00006\ \textcolor{comment}{//\ \#include\ "{}net/sock.h"{}}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00007}\mbox{\hyperlink{md02__test_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}{00007}}\ \textcolor{keywordtype}{char}\ LICENSE[]\ \mbox{\hyperlink{md02__test_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}{SEC}}(\textcolor{stringliteral}{"{}license"{}})\ =\ \textcolor{stringliteral}{"{}Dual\ BSD/GPL"{}};}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00009}00009\ }
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00010}00010\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00011}00011\ \ \ \ \ \mbox{\hyperlink{md02__test_8bpf_8c_aa90ab05907890d0017c6ce017984f2e0}{\_\_uint}}(type,\ BPF\_MAP\_TYPE\_HASH);}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00012}00012\ \ \ \ \ \mbox{\hyperlink{md02__test_8bpf_8c_aa90ab05907890d0017c6ce017984f2e0}{\_\_uint}}(max\_entries,\ 8192);}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00013}00013\ \ \ \ \ \mbox{\hyperlink{md02__test_8bpf_8c_ae37cb4895b155eac6b97f0a1e091b744}{\_\_type}}(key,\ \textcolor{keywordtype}{int});}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00014}00014\ \ \ \ \ \mbox{\hyperlink{md02__test_8bpf_8c_ae37cb4895b155eac6b97f0a1e091b744}{\_\_type}}(value,\ \textcolor{keywordtype}{int});}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00015}00015\ \}\ pid\_map\ \mbox{\hyperlink{md02__test_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}{SEC}}(\textcolor{stringliteral}{"{}.maps"{}});}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00017}00017\ \textcolor{comment}{//\ To\ trace\ all\ system\ calls\ in\ TCP}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00018}00018\ \textcolor{comment}{//\ SEC("{}kprobe/\_\_x64\_sys\_accept"{})\ for\ lo}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00020}\mbox{\hyperlink{md02__test_8bpf_8c_acf90b25de64f0eb065ea0d08c0eba230}{00020}}\ u64\ \mbox{\hyperlink{md02__test_8bpf_8c_acf90b25de64f0eb065ea0d08c0eba230}{get\_current\_time}}()\{}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00021}00021\ \ \ \ \ u64\ ts\ =\ bpf\_ktime\_get\_ns();}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00022}00022\ \ \ \ \ \textcolor{keywordflow}{return}\ ts;}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00023}00023\ \}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00024}00024\ \textcolor{comment}{//\ SEC("{}kprobe/tcp\_v4\_do\_rcv"{})}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00025}00025\ \textcolor{comment}{//\ SEC("{}kprobe/\_\_x64\_sys\_accept"{})}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00026}00026\ \textcolor{comment}{//\ SEC("{}kprobe/tcp\_v4\_do\_rcv"{})}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00027}00027\ \textcolor{comment}{//\ SEC("{}kprobe/inet\_csk\_accept"{})}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00028}00028\ \mbox{\hyperlink{md02__test_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}{SEC}}(\textcolor{stringliteral}{"{}kprobe/\_\_x64\_sys\_accept"{}})}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00034}\mbox{\hyperlink{md02__test_8bpf_8c_ae9f7611d1afe41f95392c5cdbfb9a3bd}{00034}}\ int\ \mbox{\hyperlink{md02__test_8bpf_8c_ae9f7611d1afe41f95392c5cdbfb9a3bd}{bpf\_prog}}(struct\ pt\_regs\ *ctx)}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00035}00035\ \{}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00036}00036\ \ \ \ \ \textcolor{keywordtype}{int}\ pid\ =\ bpf\_get\_current\_pid\_tgid()\ >>\ 32;}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00037}00037\ \ \ \ \ u64\ start\_time\ =\ \mbox{\hyperlink{md02__test_8bpf_8c_acf90b25de64f0eb065ea0d08c0eba230}{get\_current\_time}}();}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00038}00038\ \ \ \ \ bpf\_printk(\textcolor{stringliteral}{"{}BPF\ triggered\ from\ PID\ \%d.\(\backslash\)n"{}},\ pid);}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00039}00039\ \ \ \ \ bpf\_map\_update\_elem(\&pid\_map,\ \&pid,\&start\_time,\ BPF\_ANY);}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00040}00040\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00041}00041\ \}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00043}00043\ \mbox{\hyperlink{md02__test_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}{SEC}}(\textcolor{stringliteral}{"{}kprobe/tcp\_close"{}})}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00044}\mbox{\hyperlink{md02__test_8bpf_8c_a562fbee453d735cc3107c453877e31b8}{00044}}\ int\ \mbox{\hyperlink{md02__test_8bpf_8c_a562fbee453d735cc3107c453877e31b8}{bpf\_prog2}}(struct\ pt\_regs\ *ctx)}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00045}00045\ \{}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00046}00046\ \ \ \ \ \textcolor{keywordtype}{int}\ pid\ =\ bpf\_get\_current\_pid\_tgid()\ >>\ 32;}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00047}00047\ \ \ \ \ u64\ *pid\_ptr\ =\ bpf\_map\_lookup\_elem(\&pid\_map,\ \&pid);}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00048}00048\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00049}00049\ \ \ \ \ \textcolor{keywordflow}{if}\ (pid\_ptr\ !=\ NULL\ \&\&\ *pid\_ptr\ ==\ pid\ \&\&\ *pid\_ptr>100ULL)\ \{}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00050}00050\ \ \ \ \ \ \ \ \ bpf\_printk(\textcolor{stringliteral}{"{}Process\ closed\ connection\ \%d\(\backslash\)n:\ "{}},pid);}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00051}00051\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00053}00053\ \ \ \ \ \textcolor{comment}{//\ bpf\_trace\_printk("{}tcp\_close\ called\(\backslash\)n"{});}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00054}00054\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00055}00055\ \}}
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{md02__test_8bpf_8c_source_l00057}00057\ }
+
+\end{DoxyCode}

@@ -1,0 +1,142 @@
+\hypertarget{md02__test_8bpf_8c}{}\doxysection{src/\+\_\+monitor/md02\+\_\+test.bpf.\+c File Reference}
+\label{md02__test_8bpf_8c}\index{src/\_monitor/md02\_test.bpf.c@{src/\_monitor/md02\_test.bpf.c}}
+{\ttfamily \#include \char`\"{}vmlinux.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$bpf/bpf\+\_\+helpers.\+h$>$}\newline
+{\ttfamily \#include $<$bpf/bpf\+\_\+tracing.\+h$>$}\newline
+{\ttfamily \#include $<$bpf/bpf\+\_\+core\+\_\+read.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char LICENSE\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{md02__test_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}{SEC}} (\char`\"{}license\char`\"{})
+\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\} \mbox{\hyperlink{md02__test_8bpf_8c_a07f07d2df68dbcc58cf18952a30e28f4}{SEC}} (\char`\"{}.maps\char`\"{})\\
+
+\end{tabbing}\item 
+\mbox{\hyperlink{md02__test_8bpf_8c_aa90ab05907890d0017c6ce017984f2e0}{\+\_\+\+\_\+uint}} (type, BPF\+\_\+\+MAP\+\_\+\+TYPE\+\_\+\+HASH)
+\item 
+\mbox{\hyperlink{md02__test_8bpf_8c_af814f4e6d8e12e4f80b03046ca0f1dbc}{\+\_\+\+\_\+uint}} (max\+\_\+entries, 8192)
+\item 
+\mbox{\hyperlink{md02__test_8bpf_8c_ae37cb4895b155eac6b97f0a1e091b744}{\+\_\+\+\_\+type}} (key, int)
+\item 
+\mbox{\hyperlink{md02__test_8bpf_8c_a685c38304501244fe08a3005ada53b80}{\+\_\+\+\_\+type}} (value, int)
+\item 
+u64 \mbox{\hyperlink{md02__test_8bpf_8c_acf90b25de64f0eb065ea0d08c0eba230}{get\+\_\+current\+\_\+time}} ()
+\item 
+int \mbox{\hyperlink{md02__test_8bpf_8c_ae9f7611d1afe41f95392c5cdbfb9a3bd}{bpf\+\_\+prog}} (struct pt\+\_\+regs $\ast$ctx)
+\item 
+int \mbox{\hyperlink{md02__test_8bpf_8c_a562fbee453d735cc3107c453877e31b8}{bpf\+\_\+prog2}} (struct pt\+\_\+regs $\ast$ctx)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{md02__test_8bpf_8c_ae37cb4895b155eac6b97f0a1e091b744}\label{md02__test_8bpf_8c_ae37cb4895b155eac6b97f0a1e091b744}} 
+\index{md02\_test.bpf.c@{md02\_test.bpf.c}!\_\_type@{\_\_type}}
+\index{\_\_type@{\_\_type}!md02\_test.bpf.c@{md02\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{\_\_type()}{\_\_type()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily @2\+::\+\_\+\+\_\+type (\begin{DoxyParamCaption}\item[{key}]{,  }\item[{int}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md02__test_8bpf_8c_a685c38304501244fe08a3005ada53b80}\label{md02__test_8bpf_8c_a685c38304501244fe08a3005ada53b80}} 
+\index{md02\_test.bpf.c@{md02\_test.bpf.c}!\_\_type@{\_\_type}}
+\index{\_\_type@{\_\_type}!md02\_test.bpf.c@{md02\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{\_\_type()}{\_\_type()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily @2\+::\+\_\+\+\_\+type (\begin{DoxyParamCaption}\item[{value}]{,  }\item[{int}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md02__test_8bpf_8c_af814f4e6d8e12e4f80b03046ca0f1dbc}\label{md02__test_8bpf_8c_af814f4e6d8e12e4f80b03046ca0f1dbc}} 
+\index{md02\_test.bpf.c@{md02\_test.bpf.c}!\_\_uint@{\_\_uint}}
+\index{\_\_uint@{\_\_uint}!md02\_test.bpf.c@{md02\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{\_\_uint()}{\_\_uint()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily SEC\+::\+\_\+\+\_\+uint (\begin{DoxyParamCaption}\item[{max\+\_\+entries}]{,  }\item[{8192}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md02__test_8bpf_8c_aa90ab05907890d0017c6ce017984f2e0}\label{md02__test_8bpf_8c_aa90ab05907890d0017c6ce017984f2e0}} 
+\index{md02\_test.bpf.c@{md02\_test.bpf.c}!\_\_uint@{\_\_uint}}
+\index{\_\_uint@{\_\_uint}!md02\_test.bpf.c@{md02\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{\_\_uint()}{\_\_uint()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily SEC\+::\+\_\+\+\_\+uint (\begin{DoxyParamCaption}\item[{type}]{,  }\item[{BPF\+\_\+\+MAP\+\_\+\+TYPE\+\_\+\+HASH}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md02__test_8bpf_8c_ae9f7611d1afe41f95392c5cdbfb9a3bd}\label{md02__test_8bpf_8c_ae9f7611d1afe41f95392c5cdbfb9a3bd}} 
+\index{md02\_test.bpf.c@{md02\_test.bpf.c}!bpf\_prog@{bpf\_prog}}
+\index{bpf\_prog@{bpf\_prog}!md02\_test.bpf.c@{md02\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{bpf\_prog()}{bpf\_prog()}}
+{\footnotesize\ttfamily int bpf\+\_\+prog (\begin{DoxyParamCaption}\item[{struct pt\+\_\+regs $\ast$}]{ctx }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$ctx} & structure \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{md02__test_8bpf_8c_source_l00034}{34}} of file \mbox{\hyperlink{md02__test_8bpf_8c_source}{md02\+\_\+test.\+bpf.\+c}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00035\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{int}\ pid\ =\ bpf\_get\_current\_pid\_tgid()\ >>\ 32;}
+\DoxyCodeLine{00037\ \ \ \ \ u64\ start\_time\ =\ \mbox{\hyperlink{md02__test_8bpf_8c_acf90b25de64f0eb065ea0d08c0eba230}{get\_current\_time}}();}
+\DoxyCodeLine{00038\ \ \ \ \ bpf\_printk(\textcolor{stringliteral}{"{}BPF\ triggered\ from\ PID\ \%d.\(\backslash\)n"{}},\ pid);}
+\DoxyCodeLine{00039\ \ \ \ \ bpf\_map\_update\_elem(\&pid\_map,\ \&pid,\&start\_time,\ BPF\_ANY);}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00041\ \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{md02__test_8bpf_8c_a562fbee453d735cc3107c453877e31b8}\label{md02__test_8bpf_8c_a562fbee453d735cc3107c453877e31b8}} 
+\index{md02\_test.bpf.c@{md02\_test.bpf.c}!bpf\_prog2@{bpf\_prog2}}
+\index{bpf\_prog2@{bpf\_prog2}!md02\_test.bpf.c@{md02\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{bpf\_prog2()}{bpf\_prog2()}}
+{\footnotesize\ttfamily int bpf\+\_\+prog2 (\begin{DoxyParamCaption}\item[{struct pt\+\_\+regs $\ast$}]{ctx }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{md02__test_8bpf_8c_source_l00044}{44}} of file \mbox{\hyperlink{md02__test_8bpf_8c_source}{md02\+\_\+test.\+bpf.\+c}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{int}\ pid\ =\ bpf\_get\_current\_pid\_tgid()\ >>\ 32;}
+\DoxyCodeLine{00047\ \ \ \ \ u64\ *pid\_ptr\ =\ bpf\_map\_lookup\_elem(\&pid\_map,\ \&pid);}
+\DoxyCodeLine{00048\ \ \ \ \ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{if}\ (pid\_ptr\ !=\ NULL\ \&\&\ *pid\_ptr\ ==\ pid\ \&\&\ *pid\_ptr>100ULL)\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ bpf\_printk(\textcolor{stringliteral}{"{}Process\ closed\ connection\ \%d\(\backslash\)n:\ "{}},pid);}
+\DoxyCodeLine{00051\ \ \ \ \ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//\ bpf\_trace\_printk("{}tcp\_close\ called\(\backslash\)n"{});}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00055\ \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{md02__test_8bpf_8c_acf90b25de64f0eb065ea0d08c0eba230}\label{md02__test_8bpf_8c_acf90b25de64f0eb065ea0d08c0eba230}} 
+\index{md02\_test.bpf.c@{md02\_test.bpf.c}!get\_current\_time@{get\_current\_time}}
+\index{get\_current\_time@{get\_current\_time}!md02\_test.bpf.c@{md02\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{get\_current\_time()}{get\_current\_time()}}
+{\footnotesize\ttfamily u64 get\+\_\+current\+\_\+time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{md02__test_8bpf_8c_source_l00020}{20}} of file \mbox{\hyperlink{md02__test_8bpf_8c_source}{md02\+\_\+test.\+bpf.\+c}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00021\ \ \ \ \ u64\ ts\ =\ bpf\_ktime\_get\_ns();}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordflow}{return}\ ts;}
+\DoxyCodeLine{00023\ \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{md02__test_8bpf_8c_a07f07d2df68dbcc58cf18952a30e28f4}\label{md02__test_8bpf_8c_a07f07d2df68dbcc58cf18952a30e28f4}} 
+\index{md02\_test.bpf.c@{md02\_test.bpf.c}!SEC@{SEC}}
+\index{SEC@{SEC}!md02\_test.bpf.c@{md02\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{SEC()}{SEC()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily struct @2 SEC (\begin{DoxyParamCaption}\item[{\char`\"{}.maps\char`\"{}}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{md02__test_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}\label{md02__test_8bpf_8c_aede1f5f3a43fd0b9e5a389baf367df5f}} 
+\index{md02\_test.bpf.c@{md02\_test.bpf.c}!SEC@{SEC}}
+\index{SEC@{SEC}!md02\_test.bpf.c@{md02\_test.bpf.c}}
+\doxysubsubsection{\texorpdfstring{SEC()}{SEC()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily char LICENSE\mbox{[}$\,$\mbox{]} SEC (\begin{DoxyParamCaption}\item[{\char`\"{}license\char`\"{}}]{ }\end{DoxyParamCaption})}
+

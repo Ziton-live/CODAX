@@ -1,0 +1,161 @@
+\hypertarget{md01__test_8c}{}\doxysection{src/\+\_\+monitor/md01\+\_\+test.c File Reference}
+\label{md01__test_8c}\index{src/\_monitor/md01\_test.c@{src/\_monitor/md01\_test.c}}
+{\ttfamily \#include $<$argp.\+h$>$}\newline
+{\ttfamily \#include $<$signal.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+{\ttfamily \#include $<$sys/resource.\+h$>$}\newline
+{\ttfamily \#include $<$bpf/libbpf.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}md01\+\_\+test.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}md01\+\_\+test.\+skel.\+h\char`\"{}}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bfseries env}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{md01__test_8c_a3c04138a5bfe5d72780bb7e82a18e627}{main}} (int argc, char $\ast$$\ast$argv)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const char $\ast$ \mbox{\hyperlink{md01__test_8c_a62f73ea01c816f1996aed4c66f57c4fb}{argp\+\_\+program\+\_\+version}} = \char`\"{}CODA CONTAINER MONITOR 0.\+1\char`\"{}
+\item 
+const char $\ast$ \mbox{\hyperlink{md01__test_8c_aaa037e59f26a80a8a2e35e6f2364004d}{argp\+\_\+program\+\_\+bug\+\_\+address}} = \char`\"{}$<$bpf@vger.\+kernel.\+org$>$\char`\"{}
+\item 
+const char \mbox{\hyperlink{md01__test_8c_a68bf8952dc617e4568c80d0c39b0bbeb}{argp\+\_\+program\+\_\+doc}} \mbox{[}$\,$\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{md01__test_8c_a3c04138a5bfe5d72780bb7e82a18e627}\label{md01__test_8c_a3c04138a5bfe5d72780bb7e82a18e627}} 
+\index{md01\_test.c@{md01\_test.c}!main@{main}}
+\index{main@{main}!md01\_test.c@{md01\_test.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$$\ast$}]{argv }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{md01__test_8c_source_l00098}{98}} of file \mbox{\hyperlink{md01__test_8c_source}{md01\+\_\+test.\+c}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00099\ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{struct\ }ring\_buffer\ *rb\ =\ NULL;}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{struct\ }md01\_test\_bpf\ *skel;}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{int}\ err;}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{comment}{/*\ Parse\ command\ line\ arguments\ */}}
+\DoxyCodeLine{00105\ \ \ \ \ err\ =\ argp\_parse(\&argp,\ argc,\ argv,\ 0,\ NULL,\ NULL);}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordflow}{if}\ (err)}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ err;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ libbpf\_set\_strict\_mode(LIBBPF\_STRICT\_ALL);}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{/*\ Set\ up\ libbpf\ errors\ and\ debug\ info\ callback\ */}}
+\DoxyCodeLine{00111\ \ \ \ \ libbpf\_set\_print(libbpf\_print\_fn);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{/*\ Cleaner\ handling\ of\ Ctrl-\/C\ */}}
+\DoxyCodeLine{00114\ \ \ \ \ signal(SIGINT,\ sig\_handler);}
+\DoxyCodeLine{00115\ \ \ \ \ signal(SIGTERM,\ sig\_handler);}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{comment}{/*\ Load\ and\ verify\ BPF\ application\ */}}
+\DoxyCodeLine{00118\ \ \ \ \ skel\ =\ md01\_test\_bpf\_\_open();}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordflow}{if}\ (!skel)\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Failed\ to\ open\ and\ load\ BPF\ skeleton\(\backslash\)n"{}});}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00122\ \ \ \ \ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{/*\ Parameterize\ BPF\ code\ with\ minimum\ duration\ parameter\ */}}
+\DoxyCodeLine{00125\ \ \ \ \ skel-\/>rodata-\/>min\_duration\_ns\ =\ env.min\_duration\_ms\ *\ 1000000ULL;}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{comment}{/*\ Load\ \&\ verify\ BPF\ programs\ */}}
+\DoxyCodeLine{00128\ \ \ \ \ err\ =\ md01\_test\_bpf\_\_load(skel);}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordflow}{if}\ (err)\ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Failed\ to\ load\ and\ verify\ BPF\ skeleton\(\backslash\)n"{}});}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{goto}\ cleanup;}
+\DoxyCodeLine{00132\ \ \ \ \ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{comment}{/*\ Attach\ tracepoints\ */}}
+\DoxyCodeLine{00135\ \ \ \ \ err\ =\ md01\_test\_bpf\_\_attach(skel);}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordflow}{if}\ (err)\ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Failed\ to\ attach\ BPF\ skeleton\(\backslash\)n"{}});}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{goto}\ cleanup;}
+\DoxyCodeLine{00139\ \ \ \ \ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{comment}{/*\ Set\ up\ ring\ buffer\ polling\ */}}
+\DoxyCodeLine{00142\ \ \ \ \ rb\ =\ ring\_buffer\_\_new(bpf\_map\_\_fd(skel-\/>maps.rb),\ handle\_event,\ NULL,\ NULL);}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordflow}{if}\ (!rb)\ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ err\ =\ -\/1;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Failed\ to\ create\ ring\ buffer\(\backslash\)n"{}});}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{goto}\ cleanup;}
+\DoxyCodeLine{00147\ \ \ \ \ \}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{comment}{/*\ Process\ events\ */}}
+\DoxyCodeLine{00150\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\%-\/8s\ \%-\/5s\ \%-\/16s\ \%-\/7s\ \%-\/7s\ \%s\(\backslash\)n"{}},}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TIME"{}},\ \textcolor{stringliteral}{"{}EVENT"{}},\ \textcolor{stringliteral}{"{}COMM"{}},\ \textcolor{stringliteral}{"{}PID"{}},\ \textcolor{stringliteral}{"{}PPID"{}},\ \textcolor{stringliteral}{"{}FILENAME/EXIT\ CODE"{}});}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordflow}{while}\ (!exiting)\ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ err\ =\ ring\_buffer\_\_poll(rb,\ 100\ \textcolor{comment}{/*\ timeout,\ ms\ */});}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Ctrl-\/C\ will\ cause\ -\/EINTR\ */}}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (err\ ==\ -\/EINTR)\ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ err\ =\ 0;}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (err\ <\ 0)\ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ polling\ perf\ buffer:\ \%d\(\backslash\)n"{}},\ err);}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00163\ \ \ \ \ \}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ cleanup:}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{comment}{/*\ Clean\ up\ */}}
+\DoxyCodeLine{00167\ \ \ \ \ ring\_buffer\_\_free(rb);}
+\DoxyCodeLine{00168\ \ \ \ \ md01\_test\_bpf\_\_destroy(skel);}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordflow}{return}\ err\ <\ 0\ ?\ -\/err\ :\ 0;}
+\DoxyCodeLine{00171\ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{md01__test_8c_aaa037e59f26a80a8a2e35e6f2364004d}\label{md01__test_8c_aaa037e59f26a80a8a2e35e6f2364004d}} 
+\index{md01\_test.c@{md01\_test.c}!argp\_program\_bug\_address@{argp\_program\_bug\_address}}
+\index{argp\_program\_bug\_address@{argp\_program\_bug\_address}!md01\_test.c@{md01\_test.c}}
+\doxysubsubsection{\texorpdfstring{argp\_program\_bug\_address}{argp\_program\_bug\_address}}
+{\footnotesize\ttfamily const char$\ast$ argp\+\_\+program\+\_\+bug\+\_\+address = \char`\"{}$<$bpf@vger.\+kernel.\+org$>$\char`\"{}}
+
+
+
+Definition at line \mbox{\hyperlink{md01__test_8c_source_l00017}{17}} of file \mbox{\hyperlink{md01__test_8c_source}{md01\+\_\+test.\+c}}.
+
+\mbox{\Hypertarget{md01__test_8c_a68bf8952dc617e4568c80d0c39b0bbeb}\label{md01__test_8c_a68bf8952dc617e4568c80d0c39b0bbeb}} 
+\index{md01\_test.c@{md01\_test.c}!argp\_program\_doc@{argp\_program\_doc}}
+\index{argp\_program\_doc@{argp\_program\_doc}!md01\_test.c@{md01\_test.c}}
+\doxysubsubsection{\texorpdfstring{argp\_program\_doc}{argp\_program\_doc}}
+{\footnotesize\ttfamily const char argp\+\_\+program\+\_\+doc\mbox{[}$\,$\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\textcolor{stringliteral}{"{}BPF\ \ application.\(\backslash\)n"{}}}
+\DoxyCodeLine{\textcolor{stringliteral}{"{}It\ traces\ process\ start\ and\ exits\ and\ shows\ associated\ \(\backslash\)n"{}}}
+\DoxyCodeLine{\textcolor{stringliteral}{"{}information\ (filename,\ process\ duration,\ PID\ and\ PPID,\ etc).\(\backslash\)n"{}}}
+\DoxyCodeLine{\textcolor{stringliteral}{"{}USAGE:\ ./md01\_test\ [-\/d\ <min-\/duration-\/ms>]\ [-\/v]\(\backslash\)n"{}}}
+
+\end{DoxyCode}
+
+
+Definition at line \mbox{\hyperlink{md01__test_8c_source_l00018}{18}} of file \mbox{\hyperlink{md01__test_8c_source}{md01\+\_\+test.\+c}}.
+
+\mbox{\Hypertarget{md01__test_8c_a62f73ea01c816f1996aed4c66f57c4fb}\label{md01__test_8c_a62f73ea01c816f1996aed4c66f57c4fb}} 
+\index{md01\_test.c@{md01\_test.c}!argp\_program\_version@{argp\_program\_version}}
+\index{argp\_program\_version@{argp\_program\_version}!md01\_test.c@{md01\_test.c}}
+\doxysubsubsection{\texorpdfstring{argp\_program\_version}{argp\_program\_version}}
+{\footnotesize\ttfamily const char$\ast$ argp\+\_\+program\+\_\+version = \char`\"{}CODA CONTAINER MONITOR 0.\+1\char`\"{}}
+
+
+
+Definition at line \mbox{\hyperlink{md01__test_8c_source_l00016}{16}} of file \mbox{\hyperlink{md01__test_8c_source}{md01\+\_\+test.\+c}}.
+
