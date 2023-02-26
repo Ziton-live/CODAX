@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <sys/resource.h>
 #include <bpf/libbpf.h>
-#include "kprobe.skel.h"
+#include "md02_test.skel.h"
 
 static int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args)
 {
@@ -21,7 +21,7 @@ static void sig_int(int signo)
 
 int main(int argc, char **argv)
 {
-	struct kprobe_bpf *skel;
+	struct md02_test_bpf *skel;
 	int err;
 
 	libbpf_set_strict_mode(LIBBPF_STRICT_ALL);
@@ -29,14 +29,14 @@ int main(int argc, char **argv)
 	libbpf_set_print(libbpf_print_fn);
 
 	/* Open load and verify BPF application */
-	skel = kprobe_bpf__open_and_load();
+	skel = md02_test_bpf__open_and_load();
 	if (!skel) {
 		fprintf(stderr, "Failed to open BPF skeleton\n");
 		return 1;
 	}
 
 	/* Attach tracepoint handler */
-	err = kprobe_bpf__attach(skel);
+	err = md02_test_bpf__attach(skel);
 	if (err) {
 		fprintf(stderr, "Failed to attach BPF skeleton\n");
 		goto cleanup;
@@ -56,6 +56,6 @@ int main(int argc, char **argv)
 	}
 
 cleanup:
-	kprobe_bpf__destroy(skel);
+	md02_test_bpf__destroy(skel);
 	return -err;
 }

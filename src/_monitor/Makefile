@@ -1,6 +1,5 @@
-
-OUTPUT := build
-BIN := bin
+# SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+OUTPUT := .output
 CLANG ?= clang
 LLVM_STRIP ?= llvm-strip
 LIBBPF_SRC := $(abspath ../../libbpf/src)
@@ -11,7 +10,7 @@ BPFTOOL ?= $(BPFTOOL_OUTPUT)/bootstrap/bpftool
 LIBBLAZESYM_SRC := $(abspath ../../blazesym/)
 LIBBLAZESYM_OBJ := $(abspath $(OUTPUT)/libblazesym.a)
 LIBBLAZESYM_HEADER := $(abspath $(OUTPUT)/blazesym.h)
-ARCH := $(shell uname -m | sed 's/x86_64/x86/' | sed 's/aarch64/arm64/' | sed 's/ppc64le/powerpc/' | sed 's/mips.*/mips/')
+ARCH ?= $(shell uname -m | sed 's/x86_64/x86/' | sed 's/aarch64/arm64/' | sed 's/ppc64le/powerpc/' | sed 's/mips.*/mips/')
 VMLINUX := ../../vmlinux/$(ARCH)/vmlinux.h
 # Use our own libbpf API headers and Linux UAPI headers distributed with
 # libbpf to avoid dependency on system-wide headers, which could be missing or
@@ -20,7 +19,17 @@ INCLUDES := -I$(OUTPUT) -I../../libbpf/include/uapi -I$(dir $(VMLINUX))
 CFLAGS := -g -Wall
 ALL_LDFLAGS := $(LDFLAGS) $(EXTRA_LDFLAGS)
 
-APPS =kprobe md01_test md02_test
+APPS = md02_test md01_test md03_test
+
+CARGO ?= $(shell which cargo)
+ifeq ($(strip $(CARGO)),)
+BZS_APPS :=
+else
+BZS_APPS := profile
+APPS += $(BZS_APPS)
+# Required by libblazesym
+ALL_LDFLAGS += -lrt -ldl -lpthread -lm
+endif
 
 # Get Clang's default includes on this system. We'll explicitly add these dirs
 # to the includes list when compiling with `-target bpf` because otherwise some
