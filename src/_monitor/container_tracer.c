@@ -7,6 +7,7 @@
 #include <bpf/libbpf.h>
 #include "container_tracer.skel.h"
 #include "container_tracer.h"
+#include "../commons.h"
 
 static int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args)
 {

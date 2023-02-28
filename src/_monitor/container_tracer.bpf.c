@@ -6,9 +6,12 @@
 #include <stdbool.h>
 #include "container_tracer.h"
 #include <string.h>
+#include "../commons.h";
+#include "../_threshold_model/gen_attack_threshold.h"
+
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
 
-
+u64 get_cpu_time(u64 elapsed_time);
 
 
 /**
@@ -20,12 +23,12 @@ struct {
 	__uint(type, BPF_MAP_TYPE_HASH);
 	__uint(max_entries, 8192);
 	__type(key, int);
-	__type(value, int);
+	__type(value, u64);
 } pid_map SEC(".maps");
 
 u64 get_current_time(){
-	u64 ts = bpf_ktime_get_ns();
-	return ts;
+    return bpf_ktime_get_ns();
+
 }
 
 bool restrict_to_test(){
@@ -34,7 +37,20 @@ bool restrict_to_test(){
     char file_name[256];
     bpf_get_current_comm(&file_name,sizeof(file_name));
     if(starts_with_python(file_name)){
-        bpf_printk("Opening file_name: %s",file_name);
+        /**
+        @todo Find a a proper way to get the argument list of the python command
+        use percpu memory instead of stack
+        */
+
+        // struct task_struct *task = (struct task_struct *)bpf_get_current_task();
+        // char comm[TASK_COMM_LEN];
+        // bpf_get_current_comm(&comm, sizeof(comm));
+        // char *argp = (char *)task->mm->arg_start;
+        // char *envp = (char *)task->mm->env_start;
+        // int argc = task->mm->arg_end - task->mm->arg_start;
+        // char buf[256];
+        // bpf_probe_read_user(&buf, sizeof(buf), argp);
+        bpf_printk("TCP Connection from: %s",file_name);
         return true; 
     }
     
@@ -51,13 +67,14 @@ bool restrict_to_test(){
     @return 0, indicating success.
 */
 SEC("kretprobe/tcp_v4_connect")
-int bpf_prog(struct pt_regs *ctx)
+int bpf_trace_accept_system_call(struct pt_regs *ctx)
 {
 	int pid = bpf_get_current_pid_tgid() >> 32;
     u64 start_time = get_current_time();
     
-    if(restrict_to_test())
+    if(restrict_to_test()){
         bpf_map_update_elem(&pid_map, &pid,&start_time, BPF_ANY);
+    }
     return 0;
 }
 
@@ -72,11 +89,29 @@ int bpf_prog(struct pt_regs *ctx)
     @return 0, indicating success.
     */
 SEC("kprobe/tcp_close")
-int bpf_prog2(struct pt_regs *ctx)
+int bpf_trace_close_system_call(struct pt_regs *ctx)
 {
+   if(restrict_to_test()){
+            
 	int pid = bpf_get_current_pid_tgid() >> 32;
-	// bpf_printk("Process closed connection %d\n: ",pid);
+    u64 *start_time = bpf_map_lookup_elem(&pid_map, &pid);
+    u64 end_time = get_current_time();
+    if (start_time) {   
+        u64 elapsed_time = end_time - *start_time;
+        model_cpu_threshold(get_cpu_time(elapsed_time),pid);
+    }
+   }
     return 0;
 }
 
+/**
 
+    @brief Calculates the CPU time used for a given elapsed time.
+    This function takes as input the elapsed. It is intended to be used to calculate the CPU time used by a process during the elapsed time.
+    @warning Dont use this function as it is
+    @param elapsed_time The elapsed time for which to calculate the CPU time.
+    @return The same value as the input elapsed_time.
+    */
+u64 get_cpu_time(u64 elapsed_time){
+    return elapsed_time;
+}
