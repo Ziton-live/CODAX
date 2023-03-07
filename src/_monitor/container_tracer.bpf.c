@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "container_tracer.h"
 #include <string.h>
-#include "../commons.h";
+#include "../commons.h"
 #include "../_threshold_model/gen_attack_threshold.h"
 
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
