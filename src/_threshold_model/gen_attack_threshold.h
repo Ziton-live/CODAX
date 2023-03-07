@@ -10,10 +10,10 @@ struct map_value {
     u64 n;
     u64 t_max;
 
-    f64 mean;
-    f64 std;
-    f64 thresh;
-}__attribute__((aligned(320), packed));
+    double mean;
+    double std;
+    double thresh;
+}__attribute__((aligned(64), packed));
 
 struct {
     __uint(type, BPF_MAP_TYPE_HASH);
@@ -37,16 +37,16 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
     def_val.t_max = 0;
     def_val.n = 0;
 
-    struct map_value *value_ptr = bpf_map_lookup_elem_init(&thresh_maps, &pid, &def_val);
+    struct map_value *value_ptr = bpf_map_lookup_or_init(&thresh_maps, &pid, &def_val);
 
 
     u64 t_max = value_ptr->t_max;
     u64 n = value_ptr->n;
-    f64 mean = value_ptr->mean;
-    f64 std = value_ptr->std;
-    f64 thresh = value_ptr->thresh;
+    double mean = value_ptr->mean;
+    double std = value_ptr->std;
+    double thresh = value_ptr->thresh;
 
-    f64 temp_mean = mean;
+    double temp_mean = mean;
 
     mean = (n * mean + elapsed_time) / n + 1;
     std = sqrt((n * pow(std, 2) + pow(elapsed_time - temp_mean, 2)) / (n + 1));
