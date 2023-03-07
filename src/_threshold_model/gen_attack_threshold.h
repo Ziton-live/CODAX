@@ -2,6 +2,7 @@
 #define __gen_attack_threshold_H
 // #include "../commons.h";
 #include <math.h>
+#include "vmlinux.h"
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
 #include <bpf/bpf_core_read.h>
@@ -51,7 +52,7 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
     mean = (n * mean + elapsed_time) / n + 1;
     std = sqrt((n * pow(std, 2) + pow(elapsed_time - temp_mean, 2)) / (n + 1));
 
-    f64 t = mean + k * std;
+    double t = mean + k * std;
 
     thresh = t_max > t ? t_max : t;
     t_max = t_max > elapsed_time ? t_max : elapsed_time;
@@ -65,7 +66,7 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
 
     bpf_printk("%llu %llu %f %f %f\n: ", t_max, n, mean, std, thresh);
 
-    bpf_map_update_elem(&exec_start, &pid, value_ptr, BPF_ANY);
+    bpf_map_update_elem(&thresh_maps, &pid, value_ptr, BPF_ANY);
 }
 
 #endif 
