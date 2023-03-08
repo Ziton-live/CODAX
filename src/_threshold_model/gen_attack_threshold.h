@@ -38,7 +38,11 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
     def_val.t_max = 0;
     def_val.n = 0;
 
-    struct map_value *value_ptr = bpf_map_lookup_or_init(&thresh_maps, &pid, &def_val);
+    struct map_value *value_ptr = bpf_map_lookup_elem(&thresh_maps, &pid);
+
+    if (!value_ptr) {
+        value_ptr = &def_val;
+    }
 
     u64 t_max = value_ptr->t_max;
     u64 n = value_ptr->n;
