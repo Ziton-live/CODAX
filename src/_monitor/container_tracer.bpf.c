@@ -142,36 +142,39 @@ SEC(".maps");
 void model_cpu_threshold(u64 elapsed_time, int pid) {
     bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
-    double elapsed_time_t = (double) elapsed_time;
+    double a = 5;
+    a = 2.0 * a;
 
-    struct map_value def_val;
-    def_val.std = 0;
-    def_val.mean = 0;
-    def_val.t_max = 0;
-    def_val.n = 0;
-
-    struct map_value *value_ptr = bpf_map_lookup_elem(&thresh_maps, &pid);
-
-    if (!value_ptr) {
-        value_ptr = &def_val;
-    }
-
-    double t_max = value_ptr->t_max;
-    double n = value_ptr->n;
-
-    value_ptr->std = ((n * value_ptr->std * value_ptr->std +
-                       (elapsed_time_t - value_ptr->mean) * (elapsed_time_t - value_ptr->mean)) / (n + 1));
-    value_ptr->mean = (n * value_ptr->mean + elapsed_time_t) / n + 1;
-
-
-    double t = value_ptr->mean + 3.0 * value_ptr->std;
-
-    value_ptr->thresh = t_max > t ? t_max : t;
-    value_ptr->t_max = value_ptr->t_max > elapsed_time_t ? value_ptr->t_max : elapsed_time_t;
-
-    value_ptr->n = n + 1;
-
-    bpf_printk("%llu %llu %f %f %f\n: ", value_ptr->t_max, n + 1, value_ptr->mean, value_ptr->std, value_ptr->thresh);
-
-    bpf_map_update_elem(&thresh_maps, &pid, value_ptr, BPF_ANY);
+//    double elapsed_time_t = (double) elapsed_time;
+//
+//    struct map_value def_val;
+//    def_val.std = 0;
+//    def_val.mean = 0;
+//    def_val.t_max = 0;
+//    def_val.n = 0;
+//
+//    struct map_value *value_ptr = bpf_map_lookup_elem(&thresh_maps, &pid);
+//
+//    if (!value_ptr) {
+//        value_ptr = &def_val;
+//    }
+//
+//    double t_max = value_ptr->t_max;
+//    double n = value_ptr->n;
+//
+//    value_ptr->std = ((n * value_ptr->std * value_ptr->std +
+//                       (elapsed_time_t - value_ptr->mean) * (elapsed_time_t - value_ptr->mean)) / (n + 1));
+//    value_ptr->mean = (n * value_ptr->mean + elapsed_time_t) / n + 1;
+//
+//
+//    double t = value_ptr->mean + 3.0 * value_ptr->std;
+//
+//    value_ptr->thresh = t_max > t ? t_max : t;
+//    value_ptr->t_max = value_ptr->t_max > elapsed_time_t ? value_ptr->t_max : elapsed_time_t;
+//
+//    value_ptr->n = n + 1;
+//
+//    bpf_printk("%llu %llu %f %f %f\n: ", value_ptr->t_max, n + 1, value_ptr->mean, value_ptr->std, value_ptr->thresh);
+//
+//    bpf_map_update_elem(&thresh_maps, &pid, value_ptr, BPF_ANY);
 }
