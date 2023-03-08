@@ -163,14 +163,14 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
     value_ptr->mean = (n * value_ptr->mean + elapsed_time) / n + 1;
 
 
-    double t = mean + k * std;
+    double t = value_ptr->mean + k * value_ptr->std;
 
     value_ptr->thresh = t_max > t ? t_max : t;
     value_ptr->t_max = value_ptr->t_max > elapsed_time ? value_ptr->t_max : elapsed_time;
 
     value_ptr->n = n + 1;
 
-    bpf_printk("%llu %llu %f %f %f\n: ", t_max, n, mean, std, thresh);
+    bpf_printk("%llu %llu %f %f %f\n: ", value_ptr->t_max, n + 1, value_ptr->mean, value_ptr->std, value_ptr->thresh);
 
     bpf_map_update_elem(&thresh_maps, &pid, value_ptr, BPF_ANY);
 }
