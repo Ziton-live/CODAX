@@ -121,8 +121,8 @@ u64 get_cpu_time(u64 elapsed_time) {
 }
 
 struct map_value {
-    u64 n;
-    u64 t_max;
+    int n;
+    int t_max;
 
     double mean;
     double std;
@@ -142,6 +142,8 @@ SEC(".maps");
 void model_cpu_threshold(u64 elapsed_time, int pid) {
     bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
+    int elapsed_time_t = int(elapsed_time);
+
     int k = 3;
 
     struct map_value def_val;
@@ -156,8 +158,8 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
         value_ptr = &def_val;
     }
 
-    u64 t_max = value_ptr->t_max;
-    u64 n = value_ptr->n;
+    int t_max = value_ptr->t_max;
+    int n = value_ptr->n;
 
     value_ptr->std = ((n * value_ptr->std * value_ptr->std +
                            (elapsed_time - value_ptr->mean) * (elapsed_time - value_ptr->mean)) / (n + 1));
