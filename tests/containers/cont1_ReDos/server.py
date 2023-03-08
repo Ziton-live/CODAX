@@ -1,52 +1,73 @@
-import socket
-import random
+# import socket
+# import random
 import re
-import time
-test_list = [
-    "aaaa",
-    "aaaaaaaa",
-    "aaaaaaaaaaaa",
-    "aaaaaaaaaaaaaaaa",
-    "aaaaaaaaaaaaaaaaaaaa",
-    "aaaaaaaaaaaaaaaaaaaaaaaa",
-    "aaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
-evil_rex = r"^(a|a?)+b$"
+# import time
+import random
+
+ATTACK_STRING_LENGTH = 50
+# HOST = 'localhost'
+# PORT = 8080
 
 
-def create_response():
-    html_content = "<html><body><h1>Hello World!</h1></body></html>"
-    for s in test_list:
-        start_ts = time. perf_counter()
-        re.search(evil_rex, s)
-        stop_ts = time.perf_counter()
-        print(f"Testing of {s} took {stop_ts - start_ts :0.4f} seconds ")
-    response_headers = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: {}\n\n".format(len(html_content))
-    response_body = html_content.encode('utf-8')
-    
-    response = response_headers.encode('utf-8') + response_body
-    
-    return response
 
-HOST = 'localhost'
-PORT = 4200
+# def do_evil():
+#     evil_rex = r"^(a|a?)+b$"
+#     length = random.randint(25, ATTACK_STRING_LENGTH)
+#     string = ''.join(random.choices(['a'], k=length))
+#     print(string)
+#     print(re.search(evil_rex, string))
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# def create_response():
+#     html_content = "<html><body>Done</body></html>"
+#     response_headers = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: {}\n\n".format(len(html_content))
+#     response_body = html_content.encode('utf-8')
+#     response = response_headers.encode('utf-8') + response_body
+#     return response
 
-server_socket.bind((HOST, PORT))
+# def config_server():
+#     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+#     server_socket.bind((HOST, PORT))
+#     server_socket.listen()
+#     # server_socket.settimeout(30)
+#     print('Server listening on {}:{}'.format(HOST, PORT))
+#     return server_socket
 
-server_socket.listen()
+# def main():
+#     server_socket = config_server()
+#     while True:
+#         client_socket, client_address = server_socket.accept()
+#         print('Received connection from {}:{}'.format(client_address[0], client_address[1]))
+#         request = client_socket.recv(1024)
+#         if request.startswith(b'GET'):
+#             request = request.decode('utf-8')
+#             if '/normal' in request:
+#                 print("Normal request")
+#             if '/attack' in request:
+#                 do_evil();
+#             response = create_response()
+#             client_socket.sendall(response)
+#         client_socket.close()
 
-print('Server listening on {}:{}'.format(HOST, PORT))
 
-while True:
-    client_socket, client_address = server_socket.accept()
-    print('Received connection from {}:{}'.format(client_address[0], client_address[1]))
-    
-    request = client_socket.recv(1024)
-    
-    if request.startswith(b'GET'):
-        response = create_response()
-        time.sleep(15000)
-        client_socket.sendall(response)
-    
-    client_socket.close()
+
+# if __name__ == '__main__':
+#     main()
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello, World!"
+@app.route("/attack")
+def do_evil():
+    evil_rex = r"^(a|a?)+b$"
+    length = random.randint(35, ATTACK_STRING_LENGTH)
+    string = ''.join(random.choices(['a'], k=length))
+    print(string)
+    print(re.search(evil_rex, string))
+    return string
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=8081)

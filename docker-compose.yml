@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  redos:
+    build:
+      context: ./tests/containers/cont1_ReDos
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    deploy:
+        resources:
+            limits:
+              cpus: '0.30'
+              memory: 512M
+            reservations:
+              cpus: '0.1'
+              memory: 128M
+  billionlaughs:
+    build:
+      context: ./tests/containers/cont2_BillionLaughs
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    deploy:
+        resources:
+            limits:
+              memory: 100M
+            reservations: 
+              memory: 50M
