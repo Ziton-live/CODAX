@@ -142,10 +142,11 @@ SEC(".maps");
 void model_cpu_threshold(u64 elapsed_time, int pid) {
     bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
-    double a = 4;
+    __s64 num = (__s64) __builtin_bswap64(elapsed_time);
+
+    double a = *(double *) &num;
     a = 2.0 * a;
     bpf_printk("%f\n: ", a);
-
 
 
 //    double elapsed_time_t = (double) elapsed_time;
