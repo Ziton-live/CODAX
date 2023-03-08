@@ -33,7 +33,6 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
     int k = 3;
 
     struct map_value def_val;
-    def_val.thresh = 0;
     def_val.std = 0;
     def_val.mean = 0;
     def_val.t_max = 0;
@@ -41,29 +40,19 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
 
     struct map_value *value_ptr = bpf_map_lookup_or_init(&thresh_maps, &pid, &def_val);
 
-
     u64 t_max = value_ptr->t_max;
     u64 n = value_ptr->n;
-    double mean = value_ptr->mean;
-    double std = value_ptr->std;
-    double thresh = value_ptr->thresh;
 
-    double temp_mean = mean;
+    value_ptr->std = sqrt((n * pow(value_ptr->std, 2) + pow(elapsed_time - value_ptr->mean, 2)) / (n + 1));
+    value_ptr->mean = (n * value_ptr->mean + elapsed_time) / n + 1;
 
-    mean = (n * mean + elapsed_time) / n + 1;
-    std = sqrt((n * pow(std, 2) + pow(elapsed_time - temp_mean, 2)) / (n + 1));
 
     double t = mean + k * std;
 
-    thresh = t_max > t ? t_max : t;
-    t_max = t_max > elapsed_time ? t_max : elapsed_time;
-    n++;
+    value_ptr->thresh = t_max > t ? t_max : t;
+    value_ptr->t_max = value_ptr->t_max > elapsed_time ? value_ptr->t_max : elapsed_time;
 
-    value_ptr->t_max = t_max;
-    value_ptr->n = n;
-    value_ptr->mean = mean;
-    value_ptr->std = std;
-    value_ptr->thresh = thresh;
+    value_ptr->n = n + 1;
 
     bpf_printk("%llu %llu %f %f %f\n: ", t_max, n, mean, std, thresh);
 
