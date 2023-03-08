@@ -145,7 +145,6 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
     __s64 num = (__s64) __builtin_bswap64(elapsed_time);
 
     double a = *(double *) &num;
-    a = 2.0 * a;
     bpf_printk("%f\n: ", a);
 
 
