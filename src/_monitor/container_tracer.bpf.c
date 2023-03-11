@@ -132,5 +132,5 @@ SEC(".maps");
 
 
 void model_cpu_threshold(u64 elapsed_time, int pid) {
-    bpf_map_update_elem(&thresh_maps, &pid, &elapsed_time, BPF_ANY);
+    bpf_map_update_elem(&shared_data, &pid, &elapsed_time, BPF_ANY);
 }
