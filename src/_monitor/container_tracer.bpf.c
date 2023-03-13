@@ -175,7 +175,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     unsigned int *ptr = bpf_map_lookup_elem(&n_maps, &pid);
     if (!ptr) {
-        int zero = 11;
+        int zero = 0;
         bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
         bpf_map_update_elem(&n_maps, &pid, &zero, BPF_ANY);
         bpf_map_update_elem(&mean_maps, &pid, &zero, BPF_ANY);
