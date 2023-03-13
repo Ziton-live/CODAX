@@ -217,7 +217,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     unsigned int elapsed_t = 10;
 
-    t_std = (t_n * t_std * t_std + (elapsed_t - t_mean) * (elapsed_t - t_mean)) / (t_n + 1);
+    t_std = sqrt(t_n * t_std * t_std + (elapsed_t - t_mean) * (elapsed_t - t_mean)) / (t_n + 1));
     t_mean = (t_n * t_mean + elapsed_t) / (t_n + 1);
     t_max = t_max > elapsed_t ? t_max : elapsed_t;
 
