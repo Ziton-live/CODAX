@@ -9,8 +9,8 @@
 #include <bpf/bpf_core_read.h>
 
 struct map_value {
-    u64 n;
-    u64 t_max;
+    double n;
+    double t_max;
 
     double mean;
     double std;
@@ -28,9 +28,7 @@ SEC(".maps");
 
 
 void model_cpu_threshold(u64 elapsed_time, int pid) {
-    bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
-
-    int k = 3;
+//    bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
     struct map_value def_val;
     def_val.std = 0;
@@ -44,21 +42,23 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
         value_ptr = &def_val;
     }
 
-    u64 t_max = value_ptr->t_max;
-    u64 n = value_ptr->n;
+    double t_max = value_ptr->t_max;
+    double n = value_ptr->n;
 
-    value_ptr->std = sqrt((n * pow(value_ptr->std, 2) + pow(elapsed_time - value_ptr->mean, 2)) / (n + 1));
-    value_ptr->mean = (n * value_ptr->mean + elapsed_time) / n + 1;
+    double elaspsed_t = 10;
+
+    value_ptr->std = (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean)) / (n + 1);
+    value_ptr->mean = (n * value_ptr->mean + elaspsed_t) / n + 1;
 
 
-    double t = value_ptr->mean + k * value_ptr->std;
+    double t = value_ptr->mean + 3 * value_ptr->std;
 
     value_ptr->thresh = t_max > t ? t_max : t;
-    value_ptr->t_max = value_ptr->t_max > elapsed_time ? value_ptr->t_max : elapsed_time;
+    value_ptr->t_max = value_ptr->t_max > elaspsed_t ? value_ptr->t_max : elaspsed_t;
 
     value_ptr->n = n + 1;
 
-    bpf_printk("%llu %llu %f %f %f\n: ", value_ptr->t_max, n + 1, value_ptr->mean, value_ptr->std, value_ptr->thresh);
+    bpf_printk("Elapsed Thresh = %f\n: ", value_ptr->thresh);
 
     bpf_map_update_elem(&thresh_maps, &pid, value_ptr, BPF_ANY);
 }
