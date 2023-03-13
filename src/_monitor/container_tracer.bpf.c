@@ -120,33 +120,13 @@ u64 get_cpu_time(u64 elapsed_time) {
     return elapsed_time;
 }
 
-uint32_t divu32(uint32_t N, uint32_t D) {
-    uint32_t Q = 0;
-    uint32_t R = 0;
-
-    for (int i = 31; i >= 0; --i) {
-        Q = Q << 1;
-        R = R << 1;
-
-        R |= (N >> 31) & 1;
-        N = N << 1;
-
-        if (D <= R) {
-            R = R - D;
-            Q = Q | 1;
-        }
-    }
-
-    return Q;
-}
-
 struct {
     __uint(type, BPF_MAP_TYPE_HASH);
     __uint(max_entries, 8192);
     __type(key,
     int);
     __type(value,
-    int);
+    unsigned int);
 } n_maps
 SEC(".maps");
 
@@ -156,7 +136,7 @@ struct {
     __type(key,
     int);
     __type(value,
-    int);
+    unsigned int);
 } mean_maps
 SEC(".maps");
 
@@ -166,7 +146,7 @@ struct {
     __type(key,
     int);
     __type(value,
-    int);
+    unsigned int);
 } std_maps
 SEC(".maps");
 
@@ -176,7 +156,7 @@ struct {
     __type(key,
     int);
     __type(value,
-    int);
+    unsigned int);
 } max_maps
 SEC(".maps");
 
@@ -186,14 +166,14 @@ struct {
     __type(key,
     int);
     __type(value,
-    int);
+    unsigned int);
 } thresh_maps
 SEC(".maps");
 
 
 int model_cpu_threshold(u64 elapsed_time, int pid) {
 
-    int *ptr = bpf_map_lookup_elem(&n_maps, &pid);
+    unsigned int *ptr = bpf_map_lookup_elem(&n_maps, &pid);
     if (!ptr) {
         int zero = 11;
         bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
@@ -205,39 +185,39 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
         return 0;
     }
 
-    int *n = bpf_map_lookup_elem(&n_maps, &pid);
-    int t_n = 0;
+    unsigned int *n = bpf_map_lookup_elem(&n_maps, &pid);
+    unsigned int t_n = 0;
     if (n) {
         t_n = *n;
     }
 
-    int *mean = bpf_map_lookup_elem(&mean_maps, &pid);
-    int t_mean = 0;
+    unsigned int *mean = bpf_map_lookup_elem(&mean_maps, &pid);
+    unsigned int t_mean = 0;
     if (mean) {
         t_mean = *mean;
     }
 
-    int *std = bpf_map_lookup_elem(&std_maps, &pid);
-    int t_std = 0;
+    unsigned int *std = bpf_map_lookup_elem(&std_maps, &pid);
+    unsigned int t_std = 0;
     if (std) {
         t_std = *std;
     }
 
-    int *max = bpf_map_lookup_elem(&max_maps, &pid);
-    int t_max = 0;
+    unsigned int *max = bpf_map_lookup_elem(&max_maps, &pid);
+    unsigned int t_max = 0;
     if (max) {
         t_max = *max;
     }
 
-    int *thresh = bpf_map_lookup_elem(&thresh_maps, &pid);
-    int t_thresh = 0;
+    unsigned int *thresh = bpf_map_lookup_elem(&thresh_maps, &pid);
+    unsigned int t_thresh = 0;
     if (thresh) {
         t_thresh = *thresh;
     }
 
-    int elapsed_t = 10;
+    unsigned int elapsed_t = 10;
 
-    t_mean = divu32((t_n * t_mean + elapsed_t), t_n);
+    t_mean = (t_n * t_mean + elapsed_t)/ t_n;
 
     t_n++;
     t_std++;
