@@ -185,7 +185,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
         return 0;
     }
 
-    int *n = bpf_map_lookup_elem(&n_maps, &pid);
+//    int *n = bpf_map_lookup_elem(&n_maps, &pid);
 //    int *mean = bpf_map_lookup_elem(&mean_maps, &pid);
 //    int *std = bpf_map_lookup_elem(&std_maps, &pid);
 //    int *max = bpf_map_lookup_elem(&max_maps, &pid);
@@ -199,8 +199,8 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
 //    *mean = *n * *mean + elapsed_t;
 //    *max = *max > elapsed_t ? *max : elapsed_t;
-    if (n)
-        *n = *n + 1;
+//    if (n)
+//        *n = *n + 1;
 
 
 //    int t = value_ptr->mean + 3 * value_ptr->std;
@@ -210,7 +210,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 //
 //    value_ptr->n = n + 1;
 
-    bpf_printk("Elapsed Thresh = %d\n: ", *n);
+    bpf_printk("Elapsed Thresh = %d\n: ", *ptr);
 
 
 
