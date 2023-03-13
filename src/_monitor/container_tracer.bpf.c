@@ -207,7 +207,7 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
 //
 //    value_ptr->n = n + 1;
 
-    bpf_printk("Elapsed Thresh = %f\n: ", value_ptr->thresh);
+    bpf_printk("Elapsed Thresh = %d\n: ", *mean);
 
 
 
@@ -217,6 +217,6 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
 //    bpf_map_update_elem(&max_maps, &pid, &zero, BPF_ANY);
 //    bpf_map_update_elem(&thresh_maps, &pid, &zero, BPF_ANY);
 
-    //    bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
+    bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
 }
