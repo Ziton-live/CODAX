@@ -125,7 +125,7 @@ struct map_value {
     int mean;
     int std;
     int thresh;
-}__attribute__((aligned(32), packed));
+}__attribute__((aligned(64), packed));
 
 struct {
     __uint(type, BPF_MAP_TYPE_HASH);
