@@ -185,7 +185,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
         return 0;
     }
 
-//    int *n = bpf_map_lookup_elem(&n_maps, &pid);
+    int *n = bpf_map_lookup_elem(&n_maps, &pid);
 //    int *mean = bpf_map_lookup_elem(&mean_maps, &pid);
 //    int *std = bpf_map_lookup_elem(&std_maps, &pid);
 //    int *max = bpf_map_lookup_elem(&max_maps, &pid);
