@@ -217,28 +217,14 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     unsigned int elapsed_t = 10;
 
-    t_mean = (t_n * t_mean + elapsed_t)/ (t_n + 1);
+    t_std = (t_n * t_std * t_std + (elapsed_t - t_mean) * (elapsed_t - t_mean)) / (t_n + 1)
+    t_mean = (t_n * t_mean + elapsed_t) / (t_n + 1);
+    t_max = t_max > elapsed_t ? t_max : elapsed_t;
+
+    unsigned int t = t_mean + 3 * t_std;
+    t_thresh = t_max > t ? t_max : t;
 
     t_n++;
-    t_std++;
-    t_max++;
-    t_thresh++;
-
-//    value_ptr->std = 0; // (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean));
-//    value_ptr->mean = (n * value_ptr->mean + elaspsed_t);
-
-//    *mean = *n * *mean + elapsed_t;
-//    *max = *max > elapsed_t ? *max : elapsed_t;
-//    if (n)
-//        *n = *n + 1;
-
-
-//    int t = value_ptr->mean + 3 * value_ptr->std;
-//
-//    value_ptr->thresh = t_max > t ? t_max : t;
-//    value_ptr->t_max = value_ptr->t_max > elaspsed_t ? value_ptr->t_max : elaspsed_t;
-//
-//    value_ptr->n = n + 1;
 
     bpf_printk("Elapsed Thresh = %d\n: ", t_n);
     bpf_printk("Elapsed Thresh = %d\n: ", t_mean);
