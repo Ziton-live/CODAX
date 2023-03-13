@@ -120,12 +120,12 @@ u64 get_cpu_time(u64 elapsed_time) {
 }
 
 struct map_value {
-    double n;
-    double t_max;
+    float n;
+    float t_max;
 
-    double mean;
-    double std;
-    double thresh;
+    float mean;
+    float std;
+    float thresh;
 }__attribute__((aligned(64), packed));
 
 struct {
@@ -153,16 +153,16 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
         value_ptr = &def_val;
     }
 
-    double t_max = value_ptr->t_max;
-    double n = value_ptr->n;
+    float t_max = value_ptr->t_max;
+    float n = value_ptr->n;
 
-    double elaspsed_t = 10;
+    float elaspsed_t = 10;
 
     value_ptr->std = (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean)) / (n + 1.0);
     value_ptr->mean = (n * value_ptr->mean + elaspsed_t) / n + 1.0;
 
 
-    double t = value_ptr->mean + 3.0 * value_ptr->std;
+    float t = value_ptr->mean + 3.0 * value_ptr->std;
 
     value_ptr->thresh = t_max > t ? t_max : t;
     value_ptr->t_max = value_ptr->t_max > elaspsed_t ? value_ptr->t_max : elaspsed_t;
