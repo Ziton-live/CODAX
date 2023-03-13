@@ -10,9 +10,11 @@
 #include <math.h>
 // #include "../_threshold_model/gen_attack_threshold.h"
 
-char LICENSE[] SEC("license") = "Dual BSD/GPL";
+char LICENSE[]
+SEC("license") = "Dual BSD/GPL";
 
 u64 get_cpu_time(u64 elapsed_time);
+
 void model_cpu_threshold(u64 elapsed_time, int pid);
 
 /**
@@ -21,20 +23,22 @@ void model_cpu_threshold(u64 elapsed_time, int pid);
     This map has a maximum of 8192 entries and is defined with the SEC(".maps") attribute for loading into the eBPF virtual machine.
     */
 struct {
-	__uint(type, BPF_MAP_TYPE_HASH);
-	__uint(max_entries, 8192);
-	__type(key, int);
-	__type(value, u64);
-} pid_map SEC(".maps");
+    __uint(type, BPF_MAP_TYPE_HASH);
+    __uint(max_entries, 8192);
+    __type(key,
+    int);
+    __type(value, u64);
+} pid_map
+SEC(".maps");
 
-u64 get_current_time(){
+u64 get_current_time() {
     return bpf_ktime_get_ns();
 
 }
 
-bool restrict_to_test(){
-    if(PRODUCTION) return true;
-    
+bool restrict_to_test() {
+    if (PRODUCTION) return true;
+
     char file_name[256];
     bpf_get_current_comm(&file_name,sizeof(file_name));
      /**
@@ -44,7 +48,7 @@ bool restrict_to_test(){
     if(is_it_docker(file_name)){
         return true; 
     }
-    
+
     return false;
 }
 
@@ -58,17 +62,16 @@ bool restrict_to_test(){
     @return 0, indicating success.
 */
 SEC("kretprobe/tcp_v4_connect")
-int bpf_trace_accept_system_call(struct pt_regs *ctx)
-{
-	int pid = bpf_get_current_pid_tgid() >> 32;
+
+int bpf_trace_accept_system_call(struct pt_regs *ctx) {
+    int pid = bpf_get_current_pid_tgid() >> 32;
     u64 start_time = get_current_time();
-    
-    if(restrict_to_test()){
-        bpf_map_update_elem(&pid_map, &pid,&start_time, BPF_ANY);
+
+    if (restrict_to_test()) {
+        bpf_map_update_elem(&pid_map, &pid, &start_time, BPF_ANY);
     }
     return 0;
 }
-
 
 
 /**
@@ -80,18 +83,18 @@ int bpf_trace_accept_system_call(struct pt_regs *ctx)
     @return 0, indicating success.
     */
 SEC("kprobe/tcp_close")
-int bpf_trace_close_system_call(struct pt_regs *ctx)
-{
-   if(restrict_to_test()){
-            
-	int pid = bpf_get_current_pid_tgid() >> 32;
-    u64 *start_time = bpf_map_lookup_elem(&pid_map, &pid);
-    u64 end_time = get_current_time();
-    if (start_time) {   
-        u64 elapsed_time = end_time - *start_time;
-        model_cpu_threshold(get_cpu_time(elapsed_time),pid);
+
+int bpf_trace_close_system_call(struct pt_regs *ctx) {
+    if (restrict_to_test()) {
+
+        int pid = bpf_get_current_pid_tgid() >> 32;
+        u64 *start_time = bpf_map_lookup_elem(&pid_map, &pid);
+        u64 end_time = get_current_time();
+        if (start_time) {
+            u64 elapsed_time = end_time - *start_time;
+            model_cpu_threshold(get_cpu_time(elapsed_time), pid);
+        }
     }
-   }
     return 0;
 }
 
@@ -103,13 +106,13 @@ int bpf_trace_close_system_call(struct pt_regs *ctx)
     @param elapsed_time The elapsed time for which to calculate the CPU time.
     @return The same value as the input elapsed_time.
     */
-u64 get_cpu_time(u64 elapsed_time){
+u64 get_cpu_time(u64 elapsed_time) {
     return elapsed_time;
 }
 
 struct map_value {
-    u64 n;
-    u64 t_max;
+    double n;
+    double t_max;
 
     double mean;
     double std;
@@ -129,5 +132,42 @@ SEC(".maps");
 void model_cpu_threshold(u64 elapsed_time, int pid) {
     bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
-   
+    int k = 3;
+
+    struct map_value def_val;
+    def_val.thresh = 0;
+    def_val.std = 0;
+    def_val.mean = 0;
+    def_val.t_max = 0;
+    def_val.n = 0;
+
+    struct map_value *value_ptr = bpf_map_lookup_or_init(&thresh_maps, &pid, &def_val);
+
+
+    u64 t_max = value_ptr->t_max;
+    u64 n = value_ptr->n;
+    double mean = value_ptr->mean;
+    double std = value_ptr->std;
+    double thresh = value_ptr->thresh;
+
+    double temp_mean = mean;
+
+    mean = (n * mean + elapsed_time) / n + 1;
+    std = sqrt((n * pow(std, 2) + pow(elapsed_time - temp_mean, 2)) / (n + 1));
+
+    double t = mean + k * std;
+
+    thresh = t_max > t ? t_max : t;
+    t_max = t_max > elapsed_time ? t_max : elapsed_time;
+    n++;
+
+    value_ptr->t_max = t_max;
+    value_ptr->n = n;
+    value_ptr->mean = mean;
+    value_ptr->std = std;
+    value_ptr->thresh = thresh;
+
+    bpf_printk("%llu %llu %f %f %f\n: ", t_max, n, mean, std, thresh);
+
+    bpf_map_update_elem(&thresh_maps, &pid, value_ptr, BPF_ANY);
 }
