@@ -168,7 +168,7 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
 
     value_ptr->n = n + 1;
 
-    bpf_printk("Elapsed Thresh = %f\n: ", mean);
+    bpf_printk("Elapsed Thresh = %f\n: ", value_ptr->thresh);
 
     bpf_map_update_elem(&thresh_maps, &pid, value_ptr, BPF_ANY);
 }
