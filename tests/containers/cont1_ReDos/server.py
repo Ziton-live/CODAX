@@ -4,7 +4,7 @@ from flask import Flask,jsonify
 from flask_cors import CORS
 import random
 
-ATTACK_STRING_LENGTH = 50
+ATTACK_STRING_LENGTH = 22
 
 app = Flask(__name__)
 CORS(app)
@@ -21,7 +21,7 @@ def hello():
 @app.route("/vulnerable")
 def do_evil():
     evil_rex = r"^(a|a?)+b$"
-    length = random.randint(35, ATTACK_STRING_LENGTH)
+    length = random.randint(10, ATTACK_STRING_LENGTH)
     string = ''.join(random.choices(['a'], k=length))
     print(string)
     print(re.search(evil_rex, string))
