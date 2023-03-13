@@ -199,7 +199,8 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
 //    *mean = *n * *mean + elapsed_t;
 //    *max = *max > elapsed_t ? *max : elapsed_t;
-    *n = *n + 1;
+    if (n)
+        *n = *n + 1;
 
 
 //    int t = value_ptr->mean + 3 * value_ptr->std;
