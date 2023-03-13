@@ -120,6 +120,26 @@ u64 get_cpu_time(u64 elapsed_time) {
     return elapsed_time;
 }
 
+uint32_t divu32(uint32_t N, uint32_t D) {
+    uint32_t Q = 0;
+    uint32_t R = 0;
+
+    for (int i = 31; i >= 0; --i) {
+        Q = Q << 1;
+        R = R << 1;
+
+        R |= (N >> 31) & 1;
+        N = N << 1;
+
+        if (D <= R) {
+            R = R - D;
+            Q = Q | 1;
+        }
+    }
+
+    return Q;
+}
+
 struct {
     __uint(type, BPF_MAP_TYPE_HASH);
     __uint(max_entries, 8192);
@@ -217,7 +237,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     int elapsed_t = 10;
 
-    t_mean = (t_n * t_mean + elapsed_t) / t_n;
+    t_mean = divu32((t_n * t_mean + elapsed_t), t_n);
 
     t_n++;
     t_std++;
