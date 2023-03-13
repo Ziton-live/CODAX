@@ -5,8 +5,8 @@
 /**
 @todo Find a better way to check if the files are python files. 
 */
-int starts_with_python(const char *str) {
-    return str[0]=='p' && str[1]=='y'&& str[2]=='t';
+int is_it_docker(const char *str) {
+    return str[0]=='d' && str[1]=='o'&& str[2]=='c';
 }
 
 #endif 

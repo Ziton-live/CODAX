@@ -37,21 +37,11 @@ bool restrict_to_test(){
     
     char file_name[256];
     bpf_get_current_comm(&file_name,sizeof(file_name));
-    if(starts_with_python(file_name)){
-        /**
-        @todo Find a a proper way to get the argument list of the python command
-        use percpu memory instead of stack
+     /**
+        @todo Find a a proper way to distinguish container from non-docker processes.
         */
 
-        // struct task_struct *task = (struct task_struct *)bpf_get_current_task();
-        // char comm[TASK_COMM_LEN];
-        // bpf_get_current_comm(&comm, sizeof(comm));
-        // char *argp = (char *)task->mm->arg_start;
-        // char *envp = (char *)task->mm->env_start;
-        // int argc = task->mm->arg_end - task->mm->arg_start;
-        // char buf[256];
-        // bpf_probe_read_user(&buf, sizeof(buf), argp);
-        bpf_printk("TCP Connection from: %s",file_name);
+    if(is_it_docker(file_name)){
         return true; 
     }
     
@@ -139,42 +129,5 @@ SEC(".maps");
 void model_cpu_threshold(u64 elapsed_time, int pid) {
     bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
-    int k = 3;
-
-    struct map_value def_val;
-    def_val.thresh = 0;
-    def_val.std = 0;
-    def_val.mean = 0;
-    def_val.t_max = 0;
-    def_val.n = 0;
-
-    struct map_value *value_ptr = bpf_map_lookup_or_init(&thresh_maps, &pid, &def_val);
-
-
-    u64 t_max = value_ptr->t_max;
-    u64 n = value_ptr->n;
-    double mean = value_ptr->mean;
-    double std = value_ptr->std;
-    double thresh = value_ptr->thresh;
-
-    double temp_mean = mean;
-
-    mean = (n * mean + elapsed_time) / n + 1;
-    std = sqrt((n * pow(std, 2) + pow(elapsed_time - temp_mean, 2)) / (n + 1));
-
-    double t = mean + k * std;
-
-    thresh = t_max > t ? t_max : t;
-    t_max = t_max > elapsed_time ? t_max : elapsed_time;
-    n++;
-
-    value_ptr->t_max = t_max;
-    value_ptr->n = n;
-    value_ptr->mean = mean;
-    value_ptr->std = std;
-    value_ptr->thresh = thresh;
-
-    bpf_printk("%llu %llu %f %f %f\n: ", t_max, n, mean, std, thresh);
-
-    bpf_map_update_elem(&thresh_maps, &pid, value_ptr, BPF_ANY);
+   
 }

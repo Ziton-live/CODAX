@@ -2,6 +2,8 @@
 
 sudo docker compose build  
 sudo docker compose up &
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd $SCRIPT_DIR
 echo "Containers up and running"
 sleep 5
 
