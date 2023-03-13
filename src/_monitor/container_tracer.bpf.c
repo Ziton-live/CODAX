@@ -120,12 +120,12 @@ u64 get_cpu_time(u64 elapsed_time) {
 }
 
 struct map_value {
-    float n;
-    float t_max;
+    double n;
+    double t_max;
 
-    float mean;
-    float std;
-    float thresh;
+    double mean;
+    double std;
+    double thresh;
 }__attribute__((aligned(64), packed));
 
 struct {
@@ -153,21 +153,21 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
         value_ptr = &def_val;
     }
 
-    float t_max = value_ptr->t_max;
-    float n = value_ptr->n;
+    double t_max = value_ptr->t_max;
+    double n = value_ptr->n;
 
-    float elaspsed_t = 10;
+    double elaspsed_t = 10;
 
-    value_ptr->std = (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean)) / (n + 1.0);
-    value_ptr->mean = (n * value_ptr->mean + elaspsed_t) / n + 1.0;
+//    value_ptr->std = (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean)) / (n + 1);
+    value_ptr->mean = (n * value_ptr->mean + elaspsed_t) / n + 1;
 
 
-    float t = value_ptr->mean + 3.0 * value_ptr->std;
+//    double t = value_ptr->mean + 3 * value_ptr->std;
 
-    value_ptr->thresh = t_max > t ? t_max : t;
-    value_ptr->t_max = value_ptr->t_max > elaspsed_t ? value_ptr->t_max : elaspsed_t;
+//    value_ptr->thresh = t_max > t ? t_max : t;
+//    value_ptr->t_max = value_ptr->t_max > elaspsed_t ? value_ptr->t_max : elaspsed_t;
 
-    value_ptr->n = n + 1.0;
+//    value_ptr->n = n + 1;
 
     bpf_printk("Elapsed Thresh = %f\n: ", value_ptr->thresh);
 
