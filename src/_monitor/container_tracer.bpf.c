@@ -178,30 +178,49 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
         int zero = 11;
         bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
         bpf_map_update_elem(&n_maps, &pid, &zero, BPF_ANY);
-//        bpf_map_update_elem(&mean_maps, &pid, &zero, BPF_ANY);
-//        bpf_map_update_elem(&std_maps, &pid, &zero, BPF_ANY);
-//        bpf_map_update_elem(&max_maps, &pid, &zero, BPF_ANY);
-//        bpf_map_update_elem(&thresh_maps, &pid, &zero, BPF_ANY);
-        return 0;
+        bpf_map_update_elem(&mean_maps, &pid, &zero, BPF_ANY);
+        bpf_map_update_elem(&std_maps, &pid, &zero, BPF_ANY);
+        bpf_map_update_elem(&max_maps, &pid, &zero, BPF_ANY);
+        bpf_map_update_elem(&thresh_maps, &pid, &zero, BPF_ANY);
     }
 
     int *n = bpf_map_lookup_elem(&n_maps, &pid);
+    int t_n;
     if (n) {
-        int t_n = *n;
-        t_n++;
-
-        bpf_printk("Elapsed Thresh = %d\n: ", t_n);
-
-        bpf_map_update_elem(&n_maps, &pid, &t_n, BPF_ANY);
+        t_n = *n;
     }
 
-//    int *mean = bpf_map_lookup_elem(&mean_maps, &pid);
-//    int *std = bpf_map_lookup_elem(&std_maps, &pid);
-//    int *max = bpf_map_lookup_elem(&max_maps, &pid);
-//    int *thresh = bpf_map_lookup_elem(&thresh_maps, &pid);
+    int *mean = bpf_map_lookup_elem(&mean_maps, &pid);
+    int t_mean;
+    if (mean) {
+        t_mean = *mean;
+    }
+
+    int *std = bpf_map_lookup_elem(&std_maps, &pid);
+    int t_std;
+    if (std) {
+        t_std = *std;
+    }
+
+    int *max = bpf_map_lookup_elem(&max_maps, &pid);
+    int t_max;
+    if (max) {
+        t_max = *max;
+    }
+
+    int *thresh = bpf_map_lookup_elem(&thresh_maps, &pid);
+    int t_thresh;
+    if (thresh) {
+        t_thresh = *thresh;
+    }
 
     int elapsed_t = 10;
 
+    t_n++;
+    t_mean++;
+    t_std++;
+    t_max++;
+    t_thresh++;
 
 //    value_ptr->std = 0; // (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean));
 //    value_ptr->mean = (n * value_ptr->mean + elaspsed_t);
@@ -223,11 +242,11 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
 
 
-//    bpf_map_update_elem(&n_maps, &pid, &zero, BPF_ANY);
-//    bpf_map_update_elem(&mean_maps, &pid, &zero, BPF_ANY);
-//    bpf_map_update_elem(&std_maps, &pid, &zero, BPF_ANY);
-//    bpf_map_update_elem(&max_maps, &pid, &zero, BPF_ANY);
-//    bpf_map_update_elem(&thresh_maps, &pid, &zero, BPF_ANY);
+    bpf_map_update_elem(&n_maps, &pid, &t_n, BPF_ANY);
+    bpf_map_update_elem(&mean_maps, &pid, &t_mean, BPF_ANY);
+    bpf_map_update_elem(&std_maps, &pid, &t_std, BPF_ANY);
+    bpf_map_update_elem(&max_maps, &pid, &t_max, BPF_ANY);
+    bpf_map_update_elem(&thresh_maps, &pid, &t_thresh, BPF_ANY);
 
     bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
