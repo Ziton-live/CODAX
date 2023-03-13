@@ -158,7 +158,7 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
     int elaspsed_t = 10;
 
 
-    value_ptr->std = 0 // (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean));
+    value_ptr->std = 0; // (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean));
     value_ptr->mean = (n * value_ptr->mean + elaspsed_t);
 
 
