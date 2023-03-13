@@ -25,8 +25,7 @@ void model_cpu_threshold(u64 elapsed_time, int pid);
 struct {
     __uint(type, BPF_MAP_TYPE_HASH);
     __uint(max_entries, 8192);
-    __type(key,
-    int);
+    __type(key, int);
     __type(value, u64);
 } pid_map
 SEC(".maps");
@@ -159,18 +158,16 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
 
     double elaspsed_t = 10;
 
-    value_ptr->std =
-            (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean)) /
-            (n + 1);
-    value_ptr->mean = (n * value_ptr->mean + elaspsed_t) / n + 1;
+    value_ptr->std = (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean)) / (n + 1.0);
+    value_ptr->mean = (n * value_ptr->mean + elaspsed_t) / n + 1.0;
 
 
-    double t = value_ptr->mean + 3 * value_ptr->std;
+    double t = value_ptr->mean + 3.0 * value_ptr->std;
 
     value_ptr->thresh = t_max > t ? t_max : t;
     value_ptr->t_max = value_ptr->t_max > elaspsed_t ? value_ptr->t_max : elaspsed_t;
 
-    value_ptr->n = n + 1;
+    value_ptr->n = n + 1.0;
 
     bpf_printk("Elapsed Thresh = %f\n: ", value_ptr->thresh);
 
