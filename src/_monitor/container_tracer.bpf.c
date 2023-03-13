@@ -157,9 +157,10 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
     double n = value_ptr->n;
 
     double elaspsed_t = 10;
+    double one = 1;
 
 //    value_ptr->std = (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean)) / (n + 1);
-    value_ptr->mean = (n * value_ptr->mean + elaspsed_t) / n + 1;
+    value_ptr->mean = (n * 5.0 + elaspsed_t) / (n + one);
 
 
 //    double t = value_ptr->mean + 3 * value_ptr->std;
@@ -169,7 +170,7 @@ void model_cpu_threshold(u64 elapsed_time, int pid) {
 
 //    value_ptr->n = n + 1;
 
-    bpf_printk("Elapsed Thresh = %f\n: ", value_ptr->thresh);
+    bpf_printk("Elapsed Thresh = %f\n: ", value_ptr->mean);
 
     bpf_map_update_elem(&thresh_maps, &pid, value_ptr, BPF_ANY);
 }
