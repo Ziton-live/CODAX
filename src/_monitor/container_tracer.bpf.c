@@ -15,6 +15,7 @@ SEC("license") = "Dual BSD/GPL";
 
 u64 get_cpu_time(u64 elapsed_time);
 
+
 struct {
     __uint(type, BPF_MAP_TYPE_HASH);
     __uint(max_entries, 8192);
@@ -57,11 +58,19 @@ bool restrict_to_test() {
 
 
 
+/**
+    @brief Entry point for BPF program to trace tcp packet receive
+    kretprobe/tcp_v4_connect: for connecting with tcp packets.
+    kprobe/__x64_sys_accept: for connecting with lo interface
+    @param ctx A pointer to the pt_regs struct, which contains the register state at
+    the time the BPF program was triggered.
+    @return 0, indicating success.
+*/
 SEC("kretprobe/tcp_v4_connect")
 int bpf_trace_accept_system_call(struct pt_regs *ctx) {
     int pid = bpf_get_current_pid_tgid() >> 32;
     u64 start_time = get_current_time();
-    
+
     if (restrict_to_test()) {
         bpf_map_update_elem(&pid_map, &pid, &start_time, BPF_ANY);
     }
@@ -93,7 +102,14 @@ int bpf_trace_close_system_call(struct pt_regs *ctx) {
     return 0;
 }
 
-
+/**
+    @brief Calculates the CPU time used for a given elapsed time.
+    This function takes as input the elapsed. It is intended to be used to calculate the CPU time used by a process during the elapsed time.
+    @warning Dont use this function as it is
+    @param elapsed_time The elapsed time for which to calculate the CPU time.
+    @return The same value as the input elapsed_time.
+    this 
+    */
 u64 get_cpu_time(u64 elapsed_time) {
     return elapsed_time;
 }
