@@ -1,22 +1,19 @@
 #include "vmlinux.h"
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
-
 #include <bpf/bpf_core_read.h>
 #include <stdbool.h>
 #include "container_tracer.h"
 #include <string.h>
 #include "../commons.h"
 #include <math.h>
-
+#include "../_threshold_model/gen_attack_threshold.h"
 
 char LICENSE[]
 SEC("license") = "Dual BSD/GPL";
 
 
 u64 get_cpu_time(u64 elapsed_time);
-void model_cpu_threshold(u64 elapsed_time, int pid);
-
 
 struct {
     __uint(type, BPF_MAP_TYPE_HASH);
@@ -24,11 +21,8 @@ struct {
     __type(key,
     int);
     __type(value, u64);
-} pid_map SEC(".maps");
-
-
-
-
+} pid_map
+SEC(".maps");
 
 u64 get_current_time() {
     return bpf_ktime_get_ns();
@@ -39,12 +33,22 @@ bool restrict_to_test() {
     if (PRODUCTION) return true;
 
     char file_name[256];
-    bpf_get_current_comm(&file_name,sizeof(file_name));
-
+    bpf_get_current_comm(&file_name, sizeof(file_name));
+    if (starts_with_python(file_name)) {
     /**
-        @todo Find a a proper way to distinguish container from non-docker processes.
+        @todo Find a a proper way to get the argument list of the python command
+        use percpu memory instead of stack
     */
-    if(is_it_docker(file_name)){
+
+        // struct task_struct *task = (struct task_struct *)bpf_get_current_task();
+        // char comm[TASK_COMM_LEN];
+        // bpf_get_current_comm(&comm, sizeof(comm));
+        // char *argp = (char *)task->mm->arg_start;
+        // char *envp = (char *)task->mm->env_start;
+        // int argc = task->mm->arg_end - task->mm->arg_start;
+        // char buf[256];
+        // bpf_probe_read_user(&buf, sizeof(buf), argp);
+        bpf_printk("TCP Connection from: %s", file_name);
         return true; 
     }
 
@@ -52,7 +56,6 @@ bool restrict_to_test() {
 }
 
 
-int THRESHOLD=4097191;
 
 SEC("kretprobe/tcp_v4_connect")
 int bpf_trace_accept_system_call(struct pt_regs *ctx) {
@@ -61,37 +64,26 @@ int bpf_trace_accept_system_call(struct pt_regs *ctx) {
     
     if (restrict_to_test()) {
         bpf_map_update_elem(&pid_map, &pid, &start_time, BPF_ANY);
-        bpf_printk("[Start Marker: %d %llu]\n",pid, start_time);
     }
-    int pid_, zero = 0;
-    
     return 0;
 }
 
 
-
+/**
+    @brief Entry point for BPF program that logs closed connections.
+    This function is the entry point for a BPF program that logs when a process closes a network connection.
+    It prints a message to the kernel log indicating the PID of the process that closed the connection.
+    @param ctx A pointer to the pt_regs struct, which contains the register state at the time the BPF program
+    was triggered.
+    @return 0, indicating success.
+    */
 SEC("kprobe/tcp_close")
+
 int bpf_trace_close_system_call(struct pt_regs *ctx) {
-    int container_pids[]={39858,39879};
     if (restrict_to_test()) {
 
         int pid = bpf_get_current_pid_tgid() >> 32;
         u64 *start_time = bpf_map_lookup_elem(&pid_map, &pid);
-        bpf_printk("Close Marker: %d\n", pid);
-        for(int i = 0; i <2;i++) {
-            if(container_pids[i] != pid){
-                u64 *start_time = bpf_map_lookup_elem(&pid_map, &container_pids[i]);
-                bpf_printk("Other container[%d]: %llu\n", container_pids[i],start_time);
-                if(start_time) {
-                    u64 end_time = get_current_time();
-                    u64 elapsed_time = end_time - *start_time;
-                    if(elapsed_time > THRESHOLD) {
-                        bpf_printk("container[%d] having trouble: %llu\n", container_pids[i],start_time);
-                    }
-                }
-            }
-            
-        }
         u64 end_time = get_current_time();
         if (start_time) {
             u64 elapsed_time = end_time - *start_time;
@@ -104,14 +96,4 @@ int bpf_trace_close_system_call(struct pt_regs *ctx) {
 
 u64 get_cpu_time(u64 elapsed_time) {
     return elapsed_time;
-}
-
-
-void model_cpu_threshold(u64 elapsed_time, int pid) {
-    if(elapsed_time > THRESHOLD){
-        // bpf_printk("Attack: [%d] took %llu nano seconds operations[%llu]\n: ", pid, elapsed_time);
-    }
-    else{
-        // bpf_printk("Normal: [%d] took %llu nano seconds operations[%llu]\n: ", pid, elapsed_time);
-    }
 }

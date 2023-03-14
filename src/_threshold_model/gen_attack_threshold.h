@@ -1,66 +1,146 @@
 #ifndef __gen_attack_threshold_H
 #define __gen_attack_threshold_H
 // #include "../commons.h";
-#include <math.h>
-//#include "vmlinux.h"
-//#include <linux/bpf.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
 #include <bpf/bpf_core_read.h>
-
-struct map_value {
-    double n;
-    double t_max;
-
-    double mean;
-    double std;
-    double thresh;
-}__attribute__((aligned(64), packed));
 
 struct {
     __uint(type, BPF_MAP_TYPE_HASH);
     __uint(max_entries, 8192);
     __type(key,
     int);
-    __type(value, sizeof(struct map_value));
+    __type(value,
+    unsigned int);
+} n_maps
+SEC(".maps");
+
+struct {
+    __uint(type, BPF_MAP_TYPE_HASH);
+    __uint(max_entries, 8192);
+    __type(key,
+    int);
+    __type(value,
+    unsigned int);
+} mean_maps
+SEC(".maps");
+
+struct {
+    __uint(type, BPF_MAP_TYPE_HASH);
+    __uint(max_entries, 8192);
+    __type(key,
+    int);
+    __type(value,
+    unsigned int);
+} std_maps
+SEC(".maps");
+
+struct {
+    __uint(type, BPF_MAP_TYPE_HASH);
+    __uint(max_entries, 8192);
+    __type(key,
+    int);
+    __type(value,
+    unsigned int);
+} max_maps
+SEC(".maps");
+
+struct {
+    __uint(type, BPF_MAP_TYPE_HASH);
+    __uint(max_entries, 8192);
+    __type(key,
+    int);
+    __type(value,
+    unsigned int);
 } thresh_maps
 SEC(".maps");
 
 
-void model_cpu_threshold(u64 elapsed_time, int pid) {
-//    bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
+int model_cpu_threshold(u64 elapsed_time, int pid) {
 
-    struct map_value def_val;
-    def_val.std = 0;
-    def_val.mean = 0;
-    def_val.t_max = 0;
-    def_val.n = 0;
-
-    struct map_value *value_ptr = bpf_map_lookup_elem(&thresh_maps, &pid);
-
-    if (!value_ptr) {
-        value_ptr = &def_val;
+    unsigned int *ptr = bpf_map_lookup_elem(&n_maps, &pid);
+    if (!ptr) {
+        int zero = 0;
+        bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
+        bpf_map_update_elem(&n_maps, &pid, &zero, BPF_ANY);
+        bpf_map_update_elem(&mean_maps, &pid, &zero, BPF_ANY);
+        bpf_map_update_elem(&std_maps, &pid, &zero, BPF_ANY);
+        bpf_map_update_elem(&max_maps, &pid, &zero, BPF_ANY);
+        bpf_map_update_elem(&thresh_maps, &pid, &zero, BPF_ANY);
+        return 0;
     }
 
-    double t_max = value_ptr->t_max;
-    double n = value_ptr->n;
+    unsigned int *n = bpf_map_lookup_elem(&n_maps, &pid);
+    unsigned int t_n = 0;
+    if (n) {
+        t_n = *n;
+    }
 
-    double elaspsed_t = 10;
+    unsigned int *mean = bpf_map_lookup_elem(&mean_maps, &pid);
+    unsigned int t_mean = 0;
+    if (mean) {
+        t_mean = *mean;
+    }
 
-    value_ptr->std = (n * value_ptr->std * value_ptr->std + (elaspsed_t - value_ptr->mean) * (elaspsed_t - value_ptr->mean)) / (n + 1);
-    value_ptr->mean = (n * value_ptr->mean + elaspsed_t) / n + 1;
+    unsigned int *std = bpf_map_lookup_elem(&std_maps, &pid);
+    unsigned int t_std = 0;
+    if (std) {
+        t_std = *std;
+    }
+
+    unsigned int *max = bpf_map_lookup_elem(&max_maps, &pid);
+    unsigned int t_max = 0;
+    if (max) {
+        t_max = *max;
+    }
+
+    unsigned int *thresh = bpf_map_lookup_elem(&thresh_maps, &pid);
+    unsigned int t_thresh = 0;
+    if (thresh) {
+        t_thresh = *thresh;
+    }
+
+    unsigned int elapsed_t = (unsigned int) (elapsed_time & 0xFFFFFFFF);;
+
+    t_std = (t_n * t_std * t_std + (elapsed_t - t_mean) * (elapsed_t - t_mean)) / (t_n + 1);
+
+    //sqrt
+    unsigned int a = t_std / 2;
+    unsigned int b = (a + t_std / a) / 2;
+
+    for (int i = 0; i < 10; i++) {
+        a = b;
+        b = (a + t_std / a) / 2;
+    }
+    t_std = b;
+
+    t_mean = (t_n * t_mean + elapsed_t) / (t_n + 1);
+    t_max = t_max > elapsed_t ? t_max : elapsed_t;
+
+    unsigned int t = t_mean + 3 * t_std;
+    t_thresh = t_max > t ? t_max : t;
+
+    t_n++;
+
+    bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
+
+    bpf_printk("Count = %d\n: ", t_n);
+    bpf_printk("Mean = %d\n: ", t_mean);
+    bpf_printk("Std = %d\n: ", t_std);
+    bpf_printk("Max = %d\n: ", t_max);
+    bpf_printk("Thresh = %d\n: ", t_thresh);
+    bpf_printk("U64 = %d\n: ", elapsed_time);
+    bpf_printk("U32 = %d\n: ", elapsed_t);
 
 
-    double t = value_ptr->mean + 3 * value_ptr->std;
+    bpf_map_update_elem(&n_maps, &pid, &t_n, BPF_ANY);
+    bpf_map_update_elem(&mean_maps, &pid, &t_mean, BPF_ANY);
+    bpf_map_update_elem(&std_maps, &pid, &t_std, BPF_ANY);
+    bpf_map_update_elem(&max_maps, &pid, &t_max, BPF_ANY);
+    bpf_map_update_elem(&thresh_maps, &pid, &t_thresh, BPF_ANY);
 
-    value_ptr->thresh = t_max > t ? t_max : t;
-    value_ptr->t_max = value_ptr->t_max > elaspsed_t ? value_ptr->t_max : elaspsed_t;
+    return 0;
 
-    value_ptr->n = n + 1;
-
-    bpf_printk("Elapsed Thresh = %f\n: ", value_ptr->thresh);
-
-    bpf_map_update_elem(&thresh_maps, &pid, value_ptr, BPF_ANY);
 }
 
 #endif 
