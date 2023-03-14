@@ -8,7 +8,7 @@
 #include <string.h>
 #include "../commons.h"
 #include <math.h>
-#include "../_threshold_model/gen_attack_threshold.h"
+#include "../_threshold_model/attack_threshold.h"
 
 char LICENSE[]
 SEC("license") = "Dual BSD/GPL";
