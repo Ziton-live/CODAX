@@ -11,12 +11,10 @@
 
 
 char LICENSE[]
-
 SEC("license") = "Dual BSD/GPL";
 
+
 u64 get_cpu_time(u64 elapsed_time);
-
-
 void model_cpu_threshold(u64 elapsed_time, int pid);
 
 
@@ -57,7 +55,6 @@ bool restrict_to_test() {
 int THRESHOLD=4097191;
 
 SEC("kretprobe/tcp_v4_connect")
-
 int bpf_trace_accept_system_call(struct pt_regs *ctx) {
     int pid = bpf_get_current_pid_tgid() >> 32;
     u64 start_time = get_current_time();
