@@ -13,6 +13,7 @@
  * @todo Find a more reliable method for detecting containerized processes.
  */
 int __is_it_docker(const char *str) {
+    return true;
     return str[0]=='p' && str[1]=='y'&& str[2]=='t';
 }
 
