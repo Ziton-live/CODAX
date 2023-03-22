@@ -52,7 +52,7 @@ struct {
     int);
     __type(value,
     unsigned int);
-} thresh_maps
+} proc_pid_threshold_hash_map
 SEC(".maps");
 
 
@@ -66,7 +66,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
         bpf_map_update_elem(&mean_maps, &pid, &zero, BPF_ANY);
         bpf_map_update_elem(&std_maps, &pid, &zero, BPF_ANY);
         bpf_map_update_elem(&max_maps, &pid, &zero, BPF_ANY);
-        bpf_map_update_elem(&thresh_maps, &pid, &zero, BPF_ANY);
+        bpf_map_update_elem(&proc_pid_threshold_hash_map, &pid, &zero, BPF_ANY);
         return 0;
     }
 
@@ -94,7 +94,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
         t_max = *max;
     }
 
-    unsigned int *thresh = bpf_map_lookup_elem(&thresh_maps, &pid);
+    unsigned int *thresh = bpf_map_lookup_elem(&proc_pid_threshold_hash_map, &pid);
     unsigned int t_thresh = 0;
     if (thresh) {
         t_thresh = *thresh;
@@ -122,22 +122,22 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     t_n++;
 
-    bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
+    // bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
-    bpf_printk("Count = %d\n: ", t_n);
-    bpf_printk("Mean = %d\n: ", t_mean);
-    bpf_printk("Std = %d\n: ", t_std);
-    bpf_printk("Max = %d\n: ", t_max);
-    bpf_printk("Thresh = %d\n: ", t_thresh);
-    bpf_printk("U64 = %d\n: ", elapsed_time);
-    bpf_printk("U32 = %d\n: ", elapsed_t);
+    // bpf_printk("Count = %d\n: ", t_n);
+    // bpf_printk("Mean = %d\n: ", t_mean);
+    // bpf_printk("Std = %d\n: ", t_std);
+    // bpf_printk("Max = %d\n: ", t_max);
+    // bpf_printk("Thresh = %d\n: ", t_thresh);
+    // bpf_printk("U64 = %d\n: ", elapsed_time);
+    // bpf_printk("U32 = %d\n: ", elapsed_t);
 
 
     bpf_map_update_elem(&n_maps, &pid, &t_n, BPF_ANY);
     bpf_map_update_elem(&mean_maps, &pid, &t_mean, BPF_ANY);
     bpf_map_update_elem(&std_maps, &pid, &t_std, BPF_ANY);
     bpf_map_update_elem(&max_maps, &pid, &t_max, BPF_ANY);
-    bpf_map_update_elem(&thresh_maps, &pid, &t_thresh, BPF_ANY);
+    bpf_map_update_elem(&proc_pid_threshold_hash_map, &pid, &t_thresh, BPF_ANY);
 
     return 0;
 
