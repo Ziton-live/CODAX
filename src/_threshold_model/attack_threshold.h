@@ -52,7 +52,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
     unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, pid);
 
 
-    std_val = _sqrt(request_count * std_val * std_val + (elapsed_t - mean_val) * (elapsed_t - mean_val)) / (request_count + 1));
+    std_val = _sqrt((request_count * std_val * std_val + (elapsed_t - mean_val) * (elapsed_t - mean_val)) / (request_count + 1));
 
 
     mean_val = (request_count * mean_val + elapsed_t) / (request_count + 1);
