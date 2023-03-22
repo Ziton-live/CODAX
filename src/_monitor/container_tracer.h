@@ -17,7 +17,7 @@ int __is_it_docker(const char *str) {
 }
 
 int __is_it_python(const char *str) {
-    return str[0]=='p' && str[1]=='y';
+    return str[0]=='p' && str[8]=='t';
 }
 
 
