@@ -43,7 +43,7 @@ struct {
 bool _restrict_to_containers() {
     char file_name[256];
     bpf_get_current_comm(&file_name, sizeof(file_name));
-    if (__is_it_docker(file_name)) {
+    if (__is_it_python(file_name)) {
         return true; 
     }
     return false;
