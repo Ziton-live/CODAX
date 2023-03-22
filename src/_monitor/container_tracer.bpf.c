@@ -85,7 +85,7 @@ int __bpf_trace_accept_system_call(struct pt_regs *ctx) {
  */
 SEC("kprobe/tcp_close")
 int __bpf_trace_close_system_call(struct pt_regs *ctx) {
-    int container_pids[2]={7102,7082};
+    int container_pids[2]={405938,7082};
     int containers_count = 2;
     if (_restrict_to_containers()) {
         __is_cont_list_exceed_threshold(container_pids, containers_count);
