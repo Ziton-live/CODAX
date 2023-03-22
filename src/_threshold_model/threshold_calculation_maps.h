@@ -27,7 +27,7 @@ struct {
     __uint(max_entries, 8192);
     __type(key, int);
     __type(value, unsigned int);
-} proc_pid_threshold_hash_map SEC(".maps");
+} proc_pid_max_hash_map SEC(".maps");
 
 struct {
     __uint(type, BPF_MAP_TYPE_HASH);
