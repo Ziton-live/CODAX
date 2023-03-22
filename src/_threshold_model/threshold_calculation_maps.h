@@ -34,7 +34,7 @@ struct {
     __uint(max_entries, 8192);
     __type(key, int);
     __type(value, unsigned int);
-} process_threshold_map SEC(".maps");
+} proc_pid_threshold_hash_map SEC(".maps");
 
 
 #endif
