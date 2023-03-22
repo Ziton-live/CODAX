@@ -23,6 +23,17 @@ unsigned int __get_value_from_map(struct bpf_map *map, int pid) {
     return 0;
 }
 
+unsigned int __sqrt(unsigned int __val){
+    unsigned int a = __val / 2;
+    unsigned int b = (a + __val / a) / 2;
+
+    for (int i = 0; i < 10; i++) {
+        a = b;
+        b = (a + __val / a) / 2;
+    }
+    return b;
+}
+
 
 int model_cpu_threshold(u64 elapsed_time, int pid) {
 
@@ -41,17 +52,8 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
     unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, pid);
 
 
-    std_val = (request_count * std_val * std_val + (elapsed_t - mean_val) * (elapsed_t - mean_val)) / (request_count + 1);
+    std_val = __sqrt(request_count * std_val * std_val + (elapsed_t - mean_val) * (elapsed_t - mean_val)) / (request_count + 1));
 
-    //sqrt
-    unsigned int a = std_val / 2;
-    unsigned int b = (a + std_val / a) / 2;
-
-    for (int i = 0; i < 10; i++) {
-        a = b;
-        b = (a + std_val / a) / 2;
-    }
-    std_val = b;
 
     mean_val = (request_count * mean_val + elapsed_t) / (request_count + 1);
     max_val = max_val > elapsed_t ? max_val : elapsed_t;
