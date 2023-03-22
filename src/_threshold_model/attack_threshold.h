@@ -6,7 +6,7 @@
 #include <bpf/bpf_core_read.h>
 #include "threshold_calculation_maps.h"
 
-void __initialize_maps() {
+void __initialize_maps(int pid) {
     int zero = 0;
     bpf_map_update_elem(&proc_pid_request_count_hash_map, &pid, &zero, BPF_ANY);
     bpf_map_update_elem(&proc_pid_mean_hash_map, &pid, &zero, BPF_ANY);
@@ -28,7 +28,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     unsigned int *ptr = bpf_map_lookup_elem(&proc_pid_request_count_hash_map, &pid);
     if (!ptr) {
-        __initialize_maps();
+        __initialize_maps(pid);
         return 0;
     }
 
