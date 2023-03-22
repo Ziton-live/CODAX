@@ -65,13 +65,13 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
-    bpf_printk("Count = %d\n: ", request_count);
-    bpf_printk("Mean = %d\n: ", mean_val);
-    bpf_printk("Std = %d\n: ", std_val);
-    bpf_printk("Max = %d\n: ", max_val);
-    bpf_printk("Thresh = %d\n: ", threshold);
-    bpf_printk("U64 = %d\n: ", elapsed_time);
-    bpf_printk("U32 = %d\n: ", elapsed_t);
+    bpf_printk("Count = %i\n: ", request_count);
+    bpf_printk("Mean = %i\n: ", mean_val);
+    bpf_printk("Std = %i\n: ", std_val);
+    bpf_printk("Max = %i\n: ", max_val);
+    bpf_printk("Thresh = %i\n: ", threshold);
+    bpf_printk("U64 = %i\n: ", elapsed_time);
+    bpf_printk("U32 = %i\n: ", elapsed_t);
 
 
     bpf_map_update_elem(&proc_pid_request_count_hash_map, &pid, &request_count, BPF_ANY);

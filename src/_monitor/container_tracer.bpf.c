@@ -110,7 +110,7 @@ int __bpf_trace_close_system_call(struct pt_regs *ctx) {
  */
 void __is_cont_list_exceed_threshold(int container_pids[], int containers_count){
     for(int i = 0; i < containers_count; i++){
-        bpf_printk("containers : %d threshold:[%d]",container_pids[i],bpf_map_lookup_elem(&proc_pid_threshold_hash_map,&container_pids[i]));
+        bpf_printk("containers : %d threshold:[%i]",container_pids[i],bpf_map_lookup_elem(&proc_pid_threshold_hash_map,&container_pids[i]));
     }
 }
 
