@@ -48,6 +48,8 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
         unsigned int elapsed_t = (unsigned int) (elapsed_time & 0xFFFFFFFF);;
         if(threshold < elapsed_t){
             bpf_printk("Violated Thresh = %i - %i\n: ", threshold, elapsed_t);
+        }else{
+            bpf_printk("Normal Thresh = %i - %i\n: ", threshold, elapsed_t);
         }
         return 0;
     }
