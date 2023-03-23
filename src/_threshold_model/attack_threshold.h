@@ -43,6 +43,15 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
         return 0;
     }
 
+    if(*ptr > 10){
+        unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, pid);
+        unsigned int elapsed_t = (unsigned int) (elapsed_time & 0xFFFFFFFF);;
+        if(threshold < elapsed_t){
+            bpf_printk("Violated Thresh = %i\n: ", elapsed_t);
+        }
+        return 0;
+    }
+
     unsigned int elapsed_t = (unsigned int) (elapsed_time & 0xFFFFFFFF);;
 
     unsigned int request_count = __get_value_from_map((struct bpf_map *) &proc_pid_request_count_hash_map, pid);
