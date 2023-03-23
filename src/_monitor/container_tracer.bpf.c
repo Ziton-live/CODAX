@@ -12,7 +12,7 @@
 char LICENSE[]
 SEC("license") = "Dual BSD/GPL";
 
-void __is_cont_list_exceed_threshold(int container_pids[], int containers_count);
+void __is_cont_list_exceed_threshold(int container_pids[], int containers_count, int pid);
 
 bool _restrict_to_containers();
 
