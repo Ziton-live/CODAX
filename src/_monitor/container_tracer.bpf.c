@@ -94,7 +94,7 @@ int __bpf_trace_close_system_call(struct pt_regs *ctx) {
     int containers_count = 2;
     if (_restrict_to_containers()) {
         int pid = bpf_get_current_pid_tgid() >> 32;
-//        __is_cont_list_exceed_threshold(container_pids, containers_count, pid);
+        __is_cont_list_exceed_threshold(container_pids, containers_count, pid);
         u64 *start_time = bpf_map_lookup_elem(&proc_pid_start_time_hash_map, &pid);
         u64 end_time = __get_current_time();
         if (start_time) {
