@@ -3,6 +3,7 @@
 #include <signal.h>
 #include <string.h>
 #include <errno.h>
+#include <time.h>
 #include <sys/resource.h>
 #include <bpf/libbpf.h>
 #include "container_tracer.skel.h"
@@ -21,10 +22,32 @@ static void sig_int(int signo)
 	stop = 1;
 }
 
+static int handle_event(void *ctx, void *data, size_t data_sz)
+{
+	const struct event *e = data;
+    
+	int result;
+    struct timespec tp;
+    clockid_t clk_id;
+	clk_id = CLOCK_MONOTONIC;
+	result = clock_gettime(clk_id, &tp);
+    
+	while(true) {
+		result = clock_gettime(clk_id, &tp);
+		printf("tp.tv_nsec: %ld\n", tp.tv_nsec);
+		if(e->start_time + e->threshold >= tp.tv_nsec){
+			printf("PID: %d  threshold: %lld\n",e->pid,e->threshold);
+			break;
+			// todo : close connection and a threshold offset
+		} 
+	}
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
     
-    
+    struct ring_buffer *rb = NULL;
 	struct container_tracer_bpf *skel;
 	int err;
 
@@ -50,6 +73,14 @@ int main(int argc, char **argv)
 		fprintf(stderr, "can't set signal handler: %s\n", strerror(errno));
 		goto cleanup;
 	}
+    
+	/* Set up ring buffer polling */
+	rb = ring_buffer__new(bpf_map__fd(skel->maps.rb), handle_event, NULL, NULL);
+	if (!rb) {
+		err = -1;
+		fprintf(stderr, "Failed to create ring buffer\n");
+		goto cleanup;
+	}
 
 	printf("Successfully started! Please run `sudo cat /sys/kernel/debug/tracing/trace_pipe` "
 	       "to see output of the BPF programs.\n");
@@ -58,6 +89,15 @@ int main(int argc, char **argv)
         printf("\n\033[93m[WARNING] PROGRAM STARTED IN DEBUG MODE (ONLY TRACING PYTHON TEST PROGRAMS) \n");
     }
 	while (!stop) {
+		err = ring_buffer__poll(rb, 100 /* timeout, ms */);
+		/* Ctrl-C will cause -EINTR 
+		if (err == -EINTR) {
+			err = 0;
+			break;
+		}*/
+		if (err < 0) {
+			printf("Error polling perf buffer: %d\n", err);
+		}
 		fprintf(stderr, ".");
 		sleep(1);
 	}

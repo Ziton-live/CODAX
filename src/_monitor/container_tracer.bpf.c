@@ -32,6 +32,18 @@ struct {
 } proc_pid_start_time_hash_map SEC(".maps");
 
 
+
+/**
+ * @brief A BPF ring buffer for storing process start times.
+ *
+ * a de facto standard for sending data from kernel-space to user-space
+ * The maximum number of event entries in the ring buffer is 256.
+ */
+struct {
+	__uint(type, BPF_MAP_TYPE_RINGBUF);
+	__uint(max_entries, 256 * 1024);
+} rb SEC(".maps");
+
 /**
  * @brief Checks whether the current process is running inside a container.
  *
@@ -70,6 +82,19 @@ int __bpf_trace_accept_system_call(struct pt_regs *ctx) {
         bpf_printk("\n\nConnection From: %d\n", pid);
         bpf_map_update_elem(&proc_pid_start_time_hash_map, &pid, &start_time, BPF_ANY);
     }
+
+    /* reserve sample from BPF ringbuf */
+    struct event *e;
+	e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
+	if (!e)
+		return 0;
+    
+	e->pid = pid;
+    e->start_time = start_time;
+	e->threshold = bpf_map_lookup_elem(&proc_pid_threshold_hash_map,&pid);
+
+	/* submit it to user-space for post-processing */
+	bpf_ringbuf_submit(e, 0);
     return 0;
 }
 

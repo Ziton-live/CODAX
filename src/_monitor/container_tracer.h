@@ -16,5 +16,17 @@ int __is_it_docker(const char *str) {
     return str[0]=='d' && str[1]=='o'&& str[2]=='c';
 }
 
+/**
+ * @brief Stores tcp connection event data for post processing in user-space.
+ *
+ * Contains pid of process, process start time and threshold of respective container.
+ */
+struct event {
+	int pid;
+	unsigned long long start_time;
+	unsigned long long threshold;
+    bool exit_event;
+};
+
 
 #endif 
