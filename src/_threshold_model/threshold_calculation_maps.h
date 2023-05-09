@@ -36,5 +36,17 @@ struct {
     __type(value, unsigned int);
 } proc_pid_threshold_hash_map SEC(".maps");
 
+/**
+ * @brief A BPF hash map for storing process start times.
+ *
+ * integer key and an unsigned 64-bit value to store the start times
+ * The maximum number of entries in the hash map is 8192.
+ */
+struct {
+    __uint(type, BPF_MAP_TYPE_HASH);
+    __uint(max_entries, 8192);
+    __type(key, int);
+    __type(value, u64);
+} proc_pid_start_time_hash_map SEC(".maps");
 
 #endif

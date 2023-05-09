@@ -24,6 +24,15 @@ unsigned int __get_value_from_map(struct bpf_map *map, int pid) {
     return 0;
 }
 
+/**
+ * @brief Gets the current time in nanoseconds since system boot.
+ *
+ * @return The current time in nanoseconds since system boot.
+ */
+u64 __get_current_time() {
+    return bpf_ktime_get_ns();
+}
+
 int __pids[10] = {0};
 
 void __add_pids(int pid) {
@@ -41,6 +50,16 @@ void __is_cont_list_exceed_threshold() {
         if (__pids[i] == 0) return;
         unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, __pids[i]);
         bpf_printk("Threshold(%d) = %i\n: ", __pids[i], threshold);
+        u64 *start_time = bpf_map_lookup_elem(&proc_pid_start_time_hash_map, &__pids[i]);
+        u64 end_time = __get_current_time();
+        if(start_time){
+            u64 elapsed_time = end_time - *start_time;
+            unsigned int st = (unsigned int) (elapsed_time & 0xFFFFFFFF);
+            if(st > threshold){
+                bpf_printk("Probable DOS %i\n: ", __pids[i]);
+
+            }
+        }
     }
 }
 
@@ -55,6 +74,16 @@ unsigned int _sqrt(unsigned int __val) {
     return b;
 }
 
+void __production(int pid){
+    unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, pid);
+    unsigned int elapsed_t = (unsigned int) (elapsed_time & 0xFFFFFFFF);
+    if (threshold < elapsed_t) {
+        bpf_printk("Violated Thresh = %i - %i\n: ", threshold, elapsed_t);
+    } else {
+        bpf_printk("Normal Thresh = %i - %i\n: ", threshold, elapsed_t);
+    }
+}
+
 
 int model_cpu_threshold(u64 elapsed_time, int pid) {
 
@@ -65,13 +94,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
     }
 
     if (*ptr > 1000) {
-        unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, pid);
-        unsigned int elapsed_t = (unsigned int) (elapsed_time & 0xFFFFFFFF);;
-        if (threshold < elapsed_t) {
-            bpf_printk("Violated Thresh = %i - %i\n: ", threshold, elapsed_t);
-        } else {
-            bpf_printk("Normal Thresh = %i - %i\n: ", threshold, elapsed_t);
-        }
+        __production(pid);
         return 0;
     }
 

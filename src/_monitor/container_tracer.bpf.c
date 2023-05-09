@@ -20,21 +20,6 @@ u64 __get_current_time();
 
 u64 __get_cpu_time(u64 elapsed_time);
 
-/**
- * @brief A BPF hash map for storing process start times.
- *
- * integer key and an unsigned 64-bit value to store the start times
- * The maximum number of entries in the hash map is 8192.
- */
-struct {
-    __uint(type, BPF_MAP_TYPE_HASH);
-    __uint(max_entries, 8192);
-    __type(key,
-    int);
-    __type(value, u64);
-} proc_pid_start_time_hash_map
-SEC(".maps");
-
 
 /**
  * @brief Checks whether the current process is running inside a container.
@@ -91,8 +76,6 @@ int __bpf_trace_accept_system_call(struct pt_regs *ctx) {
 SEC("kprobe/tcp_close")
 
 int __bpf_trace_close_system_call(struct pt_regs *ctx) {
-    int container_pids[2] = {6912, 6890};
-    int containers_count = 2;
     if (_restrict_to_containers()) {
         int pid = bpf_get_current_pid_tgid() >> 32;
         // __is_cont_list_exceed_threshold(container_pids, containers_count);
@@ -121,15 +104,6 @@ int __bpf_trace_close_system_call(struct pt_regs *ctx) {
 //                    bpf_map_lookup_elem(&proc_pid_threshold_hash_map, &a));
 //     }
 // }
-
-/**
- * @brief Gets the current time in nanoseconds since system boot.
- *
- * @return The current time in nanoseconds since system boot.
- */
-u64 __get_current_time() {
-    return bpf_ktime_get_ns();
-}
 
 /**
  * @brief Returns the elapsed time in CPU cycles.
