@@ -6,7 +6,7 @@
 #include <bpf/bpf_core_read.h>
 #include "threshold_calculation_maps.h"
 
-void __initialize_maps() {
+void __initialize_maps(int pid) {
     int zero = 0;
     bpf_map_update_elem(&proc_pid_request_count_hash_map, &pid, &zero, BPF_ANY);
     bpf_map_update_elem(&proc_pid_mean_hash_map, &pid, &zero, BPF_ANY);
@@ -23,12 +23,34 @@ unsigned int __get_value_from_map(struct bpf_map *map, int pid) {
     return 0;
 }
 
+unsigned int _sqrt(unsigned int __val){
+    unsigned int a = __val / 2;
+    unsigned int b = (a + __val / a) / 2;
+
+    for (int i = 0; i < 10; i++) {
+        a = b;
+        b = (a + __val / a) / 2;
+    }
+    return b;
+}
+
 
 int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     unsigned int *ptr = bpf_map_lookup_elem(&proc_pid_request_count_hash_map, &pid);
     if (!ptr) {
-        __initialize_maps();
+        __initialize_maps(pid);
+        return 0;
+    }
+
+    if(*ptr > 10){
+        unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, pid);
+        unsigned int elapsed_t = (unsigned int) (elapsed_time & 0xFFFFFFFF);;
+        if(threshold < elapsed_t){
+            bpf_printk("Violated Thresh = %i - %i\n: ", threshold, elapsed_t);
+        }else{
+            bpf_printk("Normal Thresh = %i - %i\n: ", threshold, elapsed_t);
+        }
         return 0;
     }
 
@@ -40,18 +62,19 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
     unsigned int max_val = __get_value_from_map((struct bpf_map *) &proc_pid_max_hash_map, pid);
     unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, pid);
 
+    bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
-    std_val = (request_count * std_val * std_val + (elapsed_t - mean_val) * (elapsed_t - mean_val)) / (request_count + 1);
+    bpf_printk("Count = %i\n: ", request_count);
+    bpf_printk("Mean = %i\n: ", mean_val);
+    bpf_printk("Std = %i\n: ", std_val);
+    bpf_printk("Max = %i\n: ", max_val);
+    bpf_printk("Thresh = %i\n: ", threshold);
+    bpf_printk("U64 = %i\n: ", elapsed_time);
+    bpf_printk("U32 = %i\n: ", elapsed_t);
 
-    //sqrt
-    unsigned int a = std_val / 2;
-    unsigned int b = (a + std_val / a) / 2;
 
-    for (int i = 0; i < 10; i++) {
-        a = b;
-        b = (a + std_val / a) / 2;
-    }
-    std_val = b;
+    std_val = _sqrt((request_count * std_val * std_val + (elapsed_t - mean_val) * (elapsed_t - mean_val)) / (request_count + 1));
+
 
     mean_val = (request_count * mean_val + elapsed_t) / (request_count + 1);
     max_val = max_val > elapsed_t ? max_val : elapsed_t;
@@ -60,16 +83,6 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
     threshold = max_val > t ? max_val : t;
 
     request_count++;
-
-    bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
-
-    bpf_printk("Count = %d\n: ", request_count);
-    bpf_printk("Mean = %d\n: ", mean_val);
-    bpf_printk("Std = %d\n: ", std_val);
-    bpf_printk("Max = %d\n: ", max_val);
-    bpf_printk("Thresh = %d\n: ", threshold);
-    bpf_printk("U64 = %d\n: ", elapsed_time);
-    bpf_printk("U32 = %d\n: ", elapsed_t);
 
 
     bpf_map_update_elem(&proc_pid_request_count_hash_map, &pid, &request_count, BPF_ANY);
