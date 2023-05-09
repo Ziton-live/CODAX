@@ -1,5 +1,5 @@
 
-OUTPUT := build
+OUTPUT := ~/.codax
 BIN := bin
 CLANG ?= clang
 LLVM_STRIP ?= llvm-strip
