@@ -6,6 +6,9 @@
 #include <bpf/bpf_core_read.h>
 #include "threshold_calculation_maps.h"
 
+
+
+
 void __initialize_maps(int pid) {
     int zero = 0;
     bpf_map_update_elem(&proc_pid_request_count_hash_map, &pid, &zero, BPF_ANY);
@@ -21,6 +24,17 @@ unsigned int __get_value_from_map(struct bpf_map *map, int pid) {
         return *ptr;
     }
     return 0;
+}
+void __is_cont_list_exceed_threshold( int containers_count) {
+    int a = 6912;
+    unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, 6912 );
+    bpf_printk("Work aavuo please = %i\n: ", threshold);
+
+    // // for (int i = 0; i < containers_count; i++) {
+    
+    //     // unsigned int *thresh = bpf_map_lookup_elem(&proc_pid_threshold_hash_map, &containers_count);
+    //     bpf_printk("container Num : %d threshold:[%d]",containers_count, __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map,&containers_count));
+    // // }
 }
 
 unsigned int _sqrt(unsigned int __val){
@@ -43,7 +57,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
         return 0;
     }
 
-    if(*ptr > 10){
+    if(*ptr > 1000){
         unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, pid);
         unsigned int elapsed_t = (unsigned int) (elapsed_time & 0xFFFFFFFF);;
         if(threshold < elapsed_t){
@@ -90,9 +104,11 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
     bpf_map_update_elem(&proc_pid_std_hash_map, &pid, &std_val, BPF_ANY);
     bpf_map_update_elem(&proc_pid_max_hash_map, &pid, &max_val, BPF_ANY);
     bpf_map_update_elem(&proc_pid_threshold_hash_map, &pid, &threshold, BPF_ANY);
-
+    __is_cont_list_exceed_threshold(pid);
     return 0;
 
 }
+
+
 
 #endif 

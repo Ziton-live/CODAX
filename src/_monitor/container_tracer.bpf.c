@@ -12,7 +12,7 @@
 char LICENSE[]
 SEC("license") = "Dual BSD/GPL";
 
-void __is_cont_list_exceed_threshold(int container_pids[], int containers_count);
+// void __is_cont_list_exceed_threshold(int container_pids[], int containers_count);
 
 bool _restrict_to_containers();
 
@@ -47,7 +47,7 @@ SEC(".maps");
 bool _restrict_to_containers() {
     char file_name[256];
     bpf_get_current_comm(&file_name, sizeof(file_name));
-    if (__is_it_python(file_name)) {
+    if (__is_it_docker(file_name)) {
         return true;
     }
     return false;
@@ -69,6 +69,7 @@ SEC("kretprobe/tcp_v4_connect")
 
 int __bpf_trace_accept_system_call(struct pt_regs *ctx) {
     int pid = bpf_get_current_pid_tgid() >> 32;
+    // bpf_printk("\n\nConnection From: %d\n", pid);
     u64 start_time = __get_current_time();
     if (_restrict_to_containers()) {
         bpf_printk("\n\nConnection From: %d\n", pid);
@@ -90,11 +91,11 @@ int __bpf_trace_accept_system_call(struct pt_regs *ctx) {
 SEC("kprobe/tcp_close")
 
 int __bpf_trace_close_system_call(struct pt_regs *ctx) {
-    int container_pids[2] = {552835, 7082};
+    int container_pids[2] = {6912, 6890};
     int containers_count = 2;
     if (_restrict_to_containers()) {
         int pid = bpf_get_current_pid_tgid() >> 32;
-        __is_cont_list_exceed_threshold(container_pids, containers_count);
+        // __is_cont_list_exceed_threshold(container_pids, containers_count);
         u64 *start_time = bpf_map_lookup_elem(&proc_pid_start_time_hash_map, &pid);
         u64 end_time = __get_current_time();
         if (start_time) {
@@ -107,18 +108,19 @@ int __bpf_trace_close_system_call(struct pt_regs *ctx) {
 }
 
 
-/**
- * @brief Checks whether the number of container PIDs exceeds a threshold value.
- *
- * @param container_pids Array of container PIDs.
- * @param containers_count Number of containers in the container_pids array.
- */
-void __is_cont_list_exceed_threshold(int container_pids[], int containers_count) {
-    for (int i = 0; i < containers_count; i++) {
-        bpf_printk("containers : %d threshold:[%i]", container_pids[i],
-                   bpf_map_lookup_elem(&proc_pid_threshold_hash_map, &container_pids[i]));
-    }
-}
+// /**
+//  * @brief Checks whether the number of container PIDs exceeds a threshold value.
+//  *
+//  * @param container_pids Array of container PIDs.
+//  * @param containers_count Number of containers in the container_pids array.
+//  */
+// void __is_cont_list_exceed_threshold(int container_pids[], int containers_count) {
+//     for (int i = 0; i < containers_count; i++) {
+//         int a = 6912;
+//         bpf_printk("containers : %d threshold:[%d]", a,
+//                    bpf_map_lookup_elem(&proc_pid_threshold_hash_map, &a));
+//     }
+// }
 
 /**
  * @brief Gets the current time in nanoseconds since system boot.

@@ -1,5 +1,5 @@
 
-OUTPUT := bui
+OUTPUT := build
 BIN := bin
 CLANG ?= clang
 LLVM_STRIP ?= llvm-strip
