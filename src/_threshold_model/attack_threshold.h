@@ -24,12 +24,24 @@ unsigned int __get_value_from_map(struct bpf_map *map, int pid) {
     return 0;
 }
 
-int pids[10] = {0};
+int __pids[10] = {0};
+
+void __add_pids(int pid) {
+    for (int i = 0; i < 10; i++) {
+        if (__pids[i] == pid) return;
+        if (__pids[i] == 0) {
+            __pids[i] = pid;
+            return;
+        }
+    }
+}
 
 void __is_cont_list_exceed_threshold() {
-    int a = pids[0];
-    unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, a);
-    bpf_printk("Threshold = %i\n: ", threshold);
+    for (int i = 0; i < 10; i++) {
+        if (__pids[i] == 0) return;
+        unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, __pids[i]);
+        bpf_printk("Threshold(%d) = %i\n: ", __pids[i], threshold);
+    }
 }
 
 unsigned int _sqrt(unsigned int __val) {
@@ -100,7 +112,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
     bpf_map_update_elem(&proc_pid_std_hash_map, &pid, &std_val, BPF_ANY);
     bpf_map_update_elem(&proc_pid_max_hash_map, &pid, &max_val, BPF_ANY);
     bpf_map_update_elem(&proc_pid_threshold_hash_map, &pid, &threshold, BPF_ANY);
-    pids[0] = pid;
+    __add_pids(pid);
     __is_cont_list_exceed_threshold();
     return 0;
 }
