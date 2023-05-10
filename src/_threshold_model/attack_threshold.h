@@ -74,13 +74,12 @@ unsigned int _sqrt(unsigned int __val) {
     return b;
 }
 
-void __production(int pid){
+void __production(unsigned int elapsed_t, int pid){
     unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, pid);
-    unsigned int elapsed_t = (unsigned int) (elapsed_time & 0xFFFFFFFF);
     if (threshold < elapsed_t) {
-        bpf_printk("Violated Thresh = %i - %i\n: ", threshold, elapsed_t);
+        bpf_printk("Violated Thresh = %u | %u\n: ", threshold, elapsed_t);
     } else {
-        bpf_printk("Normal Thresh = %i - %i\n: ", threshold, elapsed_t);
+        bpf_printk("Normal Thresh = %u | %u\n: ", threshold, elapsed_t);
     }
     __is_cont_list_exceed_threshold();
 }
@@ -94,12 +93,12 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
         return 0;
     }
 
+    unsigned int elapsed_t = (unsigned int) (elapsed_time & 0xFFFFFFFF);
+
     if (*ptr > 1000) {
-        __production(pid);
+        __production(elapsed_t, pid);
         return 0;
     }
-
-    unsigned int elapsed_t = (unsigned int) (elapsed_time & 0xFFFFFFFF);;
 
     unsigned int request_count = __get_value_from_map((struct bpf_map *) &proc_pid_request_count_hash_map, pid);
     unsigned int mean_val = __get_value_from_map((struct bpf_map *) &proc_pid_mean_hash_map, pid);
