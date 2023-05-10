@@ -51,9 +51,14 @@ struct {
 
 
 struct event{
-    int pid,
+    int pid;
     unsigned int threshold;
     unsigned int elapsed_time;
 };
+
+struct {
+    __uint(type, BPF_MAP_TYPE_RINGBUF);
+    __uint(max_entries, 256 * 1024);
+} rb SEC(".maps");
 
 #endif

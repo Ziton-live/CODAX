@@ -82,9 +82,7 @@ int __bpf_trace_close_system_call(struct pt_regs *ctx) {
         u64 *start_time = bpf_map_lookup_elem(&proc_pid_start_time_hash_map, &pid);
         u64 end_time = __get_current_time();
         if (start_time) {
-            u64 elapsed_
-
-            time = end_time - *start_time;
+            u64 elapsed_time = end_time - *start_time;
             model_cpu_threshold(__get_cpu_time(elapsed_time), pid);
         }
 
