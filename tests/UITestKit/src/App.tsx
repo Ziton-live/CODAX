@@ -69,31 +69,58 @@ function App() {
         setData(resp);
       });
     }
-    return () => {};
+    return () => { };
   }, []);
 
   const accept = () => {
     localStorage.setItem("CONT_CONFIRMED", "true");
   };
-  const reject = () => {};
+  const reject = () => { };
+
   const sendRequests = async () => {
     setVis(false);
     let PATH = VUl_PATH;
     if (type === "normal") {
       PATH = SAFE_PATH;
     }
-    for (let i = 0; i < number_; i++) {
-      setMessage(
-        `sending  ${i}/${number_}th packet to ${
-          currentItem.Ports.split(":::")[1].split("->")[0]
-        }`
-      );
-      console.log(currentItem.Ports.split(":::")[1].split("->")[0]);
-      await fetch(
-        `${HOST}:${currentItem.Ports.split(":::")[1].split("->")[0]}${PATH}`
-      );
+    if (type === "mixed") {
+      let j = Math.floor(Math.random() * 20) + 10;
+      for (let i = 0; i < number_; i++) {
+        if (j == 0) {
+          j = Math.floor(Math.random() * 20) + 10;
+          if (PATH == VUl_PATH) {
+            PATH = SAFE_PATH;
+          }
+          else {
+            PATH = VUl_PATH;
+          }
+        }
+        j--;
+        setMessage(
+          `sending  ${i}/${number_}th packet to ${currentItem.Ports.split(":::")[1].split("->")[0]
+          }`
+        );
+        console.log(currentItem.Ports.split(":::")[1].split("->")[0]);
+        await fetch(
+          `${HOST}:${currentItem.Ports.split(":::")[1].split("->")[0]}${PATH}`
+        );
+      }
+    }
+    else {
+      for (let i = 0; i < number_; i++) {
+        setMessage(
+          `sending  ${i}/${number_}th packet to ${currentItem.Ports.split(":::")[1].split("->")[0]
+          }`
+        );
+        console.log(currentItem.Ports.split(":::")[1].split("->")[0]);
+        await fetch(
+          `${HOST}:${currentItem.Ports.split(":::")[1].split("->")[0]}${PATH}`
+        );
+      }
     }
   };
+
+
   return (
     <>
       {loading && (
@@ -183,6 +210,36 @@ function App() {
                                 label="Benign"
                                 icon="pi pi-check"
                                 severity="success"
+                              />
+                              <Button
+                                onClick={() => {
+                                  setType("normal");
+                                  setNumber(100);
+                                  setLoading(true);
+                                  setCurrentItem(item);
+                                  sendRequests().then((r) => {
+                                    setLoading(false);
+                                  });
+
+                                }}
+                                label="Send Train"
+                                icon="pi pi-bolt"
+                                severity="warning"
+                              />
+                              <Button
+                                onClick={() => {
+                                  setType("mixed");
+                                  setNumber(1000);
+                                  setLoading(true);
+                                  setCurrentItem(item);
+                                  sendRequests().then((r) => {
+                                    setLoading(false);
+                                  });
+
+                                }}
+                                label="Send Test"
+                                icon="pi pi-shield"
+                                severity="help"
                               />
                               <Button label="Log" icon="pi pi-file" />
                             </span>
