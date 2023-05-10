@@ -50,8 +50,9 @@ void __is_cont_list_exceed_threshold() {
         if (__pids[i] == 0) return;
         unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, __pids[i]);
         bpf_printk("Threshold(%d) = %i\n: ", __pids[i], threshold);
-//        u64 *start_time = bpf_map_lookup_elem(&proc_pid_start_time_hash_map, &__pids[i]);
-//        u64 end_time = __get_current_time();
+        u64 *start_time = bpf_map_lookup_elem(&proc_pid_start_time_hash_map, &__pids[i]);
+        u64 end_time = __get_current_time();
+        bpf_printk("Start Time %llu", *start_time);
 //        if(start_time){
 //            u64 elapsed_time = end_time - *start_time;
 //            unsigned int st = (unsigned int) (elapsed_time & 0xFFFFFFFF);
@@ -74,7 +75,7 @@ unsigned int _sqrt(unsigned int __val) {
     return b;
 }
 
-void __production(unsigned int elapsed_t, int pid){
+void __production(unsigned int elapsed_t, int pid) {
     unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, pid);
     if (threshold < elapsed_t) {
         bpf_printk("Violated Thresh = %u | %u\n: ", threshold, elapsed_t);
