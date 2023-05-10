@@ -34,7 +34,7 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 //        printf("The file is not opened.\n");
 //        return 0;
 //    }
-    printf("%d", e->pid);
+    printf("RING BUFFER %d", e->pid);
     return 0;
 }
 
