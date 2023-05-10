@@ -50,15 +50,15 @@ void __is_cont_list_exceed_threshold() {
         if (__pids[i] == 0) return;
         unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, __pids[i]);
         bpf_printk("Threshold(%d) = %i\n: ", __pids[i], threshold);
-        u64 * start_time = bpf_map_lookup_elem(&proc_pid_start_time_hash_map, &__pids[i]);
+        u64 *start_time = bpf_map_lookup_elem(&proc_pid_start_time_hash_map, &__pids[i]);
         u64 end_time = __get_current_time();
-        if(start_time){
+        if (start_time) {
             u64 elapsed_time = end_time - *start_time;
             unsigned int st = (unsigned int) (elapsed_time & 0xFFFFFFFF);
-            if(st > threshold){
-                bpf_printk("Probable DOS\n");
-            }else{
-                bpf_printk("No DOS\n");
+            if (st > threshold) {
+                bpf_printk("Process %d - Probable DOS \n", __pids[i]);
+            } else {
+                bpf_printk("Process %d - Normal Time\n", __pids[i]);
             }
         }
     }
@@ -109,7 +109,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
-    bpf_printk("request count = %u\n: ", request_count);
+//    bpf_printk("Count = %u\n: ", request_count);
 //    bpf_printk("Mean = %i\n: ", mean_val);
 //    bpf_printk("Std = %i\n: ", std_val);
 //    bpf_printk("Max = %i\n: ", max_val);
