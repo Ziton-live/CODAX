@@ -3,6 +3,7 @@
 #include <signal.h>
 #include <string.h>
 #include <errno.h>
+#include <stdlib.h>
 #include <sys/resource.h>
 #include <bpf/libbpf.h>
 #include "container_tracer.skel.h"
@@ -21,10 +22,25 @@ static void sig_int(int signo)
 	stop = 1;
 }
 
+static int handle_event(void *ctx, void *data, size_t data_sz)
+{
+    const struct event * e = data;
+
+    FILE * fptr;
+    char file_name[100];
+//    sprintf(file_name, "/.codax/data/%d.thresh",e->threshold);
+//    fptr = fopen(file_name, "w");
+//    if(!fptr){
+//        printf("The file is not opened.\n");
+//        return 0;
+//    }
+    printf("%d", e->pid);
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
-    
-    
+    struct ring_buffer *rb = NULL;
 	struct container_tracer_bpf *skel;
 	int err;
 
@@ -50,6 +66,13 @@ int main(int argc, char **argv)
 		fprintf(stderr, "can't set signal handler: %s\n", strerror(errno));
 		goto cleanup;
 	}
+
+    rb = ring_buffer__new(bpf_map__fd(skel->maps.rb), handle_event, NULL, NULL);
+    if (!rb) {
+        err = -1;
+        fprintf(stderr, "Failed to create ring buffer\n");
+        goto cleanup;
+    }
 
 	printf("Successfully started! Please run `sudo cat /sys/kernel/debug/tracing/trace_pipe` "
 	       "to see output of the BPF programs.\n");

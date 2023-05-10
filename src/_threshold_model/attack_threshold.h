@@ -109,11 +109,11 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     bpf_printk("[%d] took %llu nano seconds\n: ", pid, elapsed_time);
 
-    bpf_printk("Count = %u\n: ", request_count);
+    bpf_printk("request count = %u\n: ", request_count);
 //    bpf_printk("Mean = %i\n: ", mean_val);
 //    bpf_printk("Std = %i\n: ", std_val);
 //    bpf_printk("Max = %i\n: ", max_val);
-    bpf_printk("Thresh = %u\n: ", threshold);
+//    bpf_printk("Thresh = %u\n: ", threshold);
 //    bpf_printk("U64 = %i\n: ", elapsed_time);
 //    bpf_printk("U32 = %i\n: ", elapsed_t);
 
@@ -130,13 +130,22 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     request_count++;
 
-
     bpf_map_update_elem(&proc_pid_request_count_hash_map, &pid, &request_count, BPF_ANY);
     bpf_map_update_elem(&proc_pid_mean_hash_map, &pid, &mean_val, BPF_ANY);
     bpf_map_update_elem(&proc_pid_std_hash_map, &pid, &std_val, BPF_ANY);
     bpf_map_update_elem(&proc_pid_max_hash_map, &pid, &max_val, BPF_ANY);
     bpf_map_update_elem(&proc_pid_threshold_hash_map, &pid, &threshold, BPF_ANY);
     __add_pids(pid);
+
+    struct event * e;
+    e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
+    if(!e) return 0;
+
+    e->pid = pid;
+    e->elapsed_time = elapsed_t;
+    e->threshold = threshold;
+
+    bpf_ringbuf_submit(e, 0);
     return 0;
 }
 

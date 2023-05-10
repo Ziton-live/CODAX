@@ -49,4 +49,11 @@ struct {
     __type(value, u64);
 } proc_pid_start_time_hash_map SEC(".maps");
 
+
+struct event{
+    int pid,
+    unsigned int threshold;
+    unsigned int elapsed_time;
+};
+
 #endif
