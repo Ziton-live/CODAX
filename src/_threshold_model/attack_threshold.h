@@ -57,6 +57,7 @@ void __is_cont_list_exceed_threshold() {
             unsigned int st = (unsigned int) (elapsed_time & 0xFFFFFFFF);
             if (st > threshold) {
                 bpf_printk("Process %d - Probable DOS \n", __pids[i]);
+                // TODO Send Threshold, pid, elapsed_time, and a boolean showing attack_happen to user program
             } else {
                 bpf_printk("Process %d - Normal Time\n", __pids[i]);
             }
@@ -137,6 +138,9 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
     bpf_map_update_elem(&proc_pid_max_hash_map, &pid, &max_val, BPF_ANY);
     bpf_map_update_elem(&proc_pid_threshold_hash_map, &pid, &threshold, BPF_ANY);
     __add_pids(pid);
+
+    // TODO Send pid, threshold, elapsed_time to user program
+
     return 0;
 }
 
