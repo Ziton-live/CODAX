@@ -8,6 +8,7 @@
 #include "container_tracer.skel.h"
 #include "container_tracer.h"
 #include "../commons.h"
+#include "../_threshold_model/threshold_calculation_maps.h" 
 
 static int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args)
 {
@@ -21,10 +22,16 @@ static void sig_int(int signo)
 	stop = 1;
 }
 
+static int handle_event(void *ctx, void *data, size_t data_sz)
+{
+	const struct event *e = data;
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
     
-    
+    struct ring_buffer *rb = NULL;
 	struct container_tracer_bpf *skel;
 	int err;
 
@@ -48,6 +55,14 @@ int main(int argc, char **argv)
 
 	if (signal(SIGINT, sig_int) == SIG_ERR) {
 		fprintf(stderr, "can't set signal handler: %s\n", strerror(errno));
+		goto cleanup;
+	}
+    
+	/* Set up ring buffer polling */
+	rb = ring_buffer__new(bpf_map__fd(skel->maps.rb), handle_event, NULL, NULL);
+	if (!rb) {
+		err = -1;
+		fprintf(stderr, "Failed to create ring buffer\n");
 		goto cleanup;
 	}
 
