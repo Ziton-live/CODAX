@@ -9,6 +9,7 @@
 #include "container_tracer.skel.h"
 #include "container_tracer.h"
 #include "../commons.h"
+//#include "../_threshold_model/threshold_calculation_maps.h"
 
 static int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args)
 {
@@ -26,8 +27,8 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 {
     const struct event * e = data;
 
-    FILE * fptr;
-    char file_name[100];
+//    FILE * fptr;
+//    char file_name[100];
 //    sprintf(file_name, "/.codax/data/%d.thresh",e->threshold);
 //    fptr = fopen(file_name, "w");
 //    if(!fptr){
@@ -67,6 +68,14 @@ int main(int argc, char **argv)
 		goto cleanup;
 	}
 
+	/* Set up ring buffer polling */
+	rb = ring_buffer__new(bpf_map__fd(skel->maps.rb), handle_event, NULL, NULL);
+	if (!rb) {
+		err = -1;
+		fprintf(stderr, "Failed to create ring buffer\n");
+		goto cleanup;
+	}
+
     rb = ring_buffer__new(bpf_map__fd(skel->maps.rb), handle_event, NULL, NULL);
     if (!rb) {
         err = -1;
@@ -80,10 +89,18 @@ int main(int argc, char **argv)
     if(!PRODUCTION){
         printf("\n\033[93m[WARNING] PROGRAM STARTED IN DEBUG MODE (ONLY TRACING PYTHON TEST PROGRAMS) \n");
     }
-	while (!stop) {
-		fprintf(stderr, ".");
-		sleep(1);
-	}
+    while (!stop) {
+      err = ring_buffer__poll(rb, 100 /* timeout, ms */);
+      /* Ctrl-C will cause -EINTR */
+      if (err == -EINTR) {
+        err = 0;
+        break;
+      }
+      if (err < 0) {
+        printf("Error polling perf buffer: %d\n", err);
+        break;
+      }
+    }
 
 cleanup:
 	container_tracer_bpf__destroy(skel);

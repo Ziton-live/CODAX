@@ -5,6 +5,7 @@
 #include <bpf/bpf_tracing.h>
 #include <bpf/bpf_core_read.h>
 #include "threshold_calculation_maps.h"
+#include "../commons.h"
 
 
 void __initialize_maps(int pid) {
@@ -45,9 +46,9 @@ void __add_pids(int pid) {
     }
 }
 
-void __is_cont_list_exceed_threshold() {
+int __is_cont_list_exceed_threshold() {
     for (int i = 0; i < 10; i++) {
-        if (__pids[i] == 0) return;
+        if (__pids[i] == 0) return 0;
         unsigned int threshold = __get_value_from_map((struct bpf_map *) &proc_pid_threshold_hash_map, __pids[i]);
         bpf_printk("Threshold(%d) = %i\n: ", __pids[i], threshold);
         u64 *start_time = bpf_map_lookup_elem(&proc_pid_start_time_hash_map, &__pids[i]);
@@ -57,11 +58,25 @@ void __is_cont_list_exceed_threshold() {
             unsigned int st = (unsigned int) (elapsed_time & 0xFFFFFFFF);
             if (st > threshold) {
                 bpf_printk("Process %d - Probable DOS \n", __pids[i]);
+                // TODO Send Threshold, pid, elapsed_time, and a boolean showing attack_happen to user program
+                /* reserve sample into BPF ringbuf */
+                struct event *e;
+	            e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
+                if(!e) return 0;
+	            e->pid = __pids[i];
+                e->elapsed_time = elapsed_time;
+	            e->threshold = threshold;
+                e->probable_DoS = true;
+
+	            /* submit it to user-space for post-processing */
+	            bpf_ringbuf_submit(e, 0);
+
             } else {
                 bpf_printk("Process %d - Normal Time\n", __pids[i]);
             }
         }
     }
+    return 0;
 }
 
 unsigned int _sqrt(unsigned int __val) {
@@ -139,13 +154,16 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
 
     struct event * e;
     e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
-    if(!e) return 0;
 
+    if(!e) return 0;
+    bpf_printk("RB SEND");
     e->pid = pid;
-    e->elapsed_time = elapsed_t;
+    e->elapsed_time = elapsed_t;	
     e->threshold = threshold;
 
     bpf_ringbuf_submit(e, 0);
+    // TODO Send pid, threshold, elapsed_time to user program
+    /* reserve sample into BPF ringbuf */
     return 0;
 }
 

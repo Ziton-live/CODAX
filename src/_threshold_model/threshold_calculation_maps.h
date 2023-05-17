@@ -50,11 +50,11 @@ struct {
 } proc_pid_start_time_hash_map SEC(".maps");
 
 
-struct event{
-    int pid;
-    unsigned int threshold;
-    unsigned int elapsed_time;
-};
+//struct event{
+//    int pid;
+//    unsigned int threshold;
+//    unsigned int elapsed_time;
+//};
 
 struct {
     __uint(type, BPF_MAP_TYPE_RINGBUF);

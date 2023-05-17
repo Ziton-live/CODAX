@@ -16,5 +16,11 @@
 // 	char filename[MAX_FILENAME_LEN];
 // };
 
+struct event {
+    int pid;
+    unsigned int threshold;
+    unsigned int elapsed_time;
+    bool probable_DoS;
+};
 
 #endif 
