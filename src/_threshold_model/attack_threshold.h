@@ -60,6 +60,7 @@ int __is_cont_list_exceed_threshold() {
                 bpf_printk("Process %d - Probable DOS \n", __pids[i]);
                 // TODO Send Threshold, pid, elapsed_time, and a boolean showing attack_happen to user program
                 /* reserve sample into BPF ringbuf */
+
                 struct event *e;
 	            e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
                 if(!e) return 0;
@@ -68,7 +69,6 @@ int __is_cont_list_exceed_threshold() {
 	            e->threshold = threshold;
                 e->probable_DoS = true;
 
-	            /* submit it to user-space for post-processing */
 	            bpf_ringbuf_submit(e, 0);
 
             } else {
@@ -156,7 +156,7 @@ int model_cpu_threshold(u64 elapsed_time, int pid) {
     e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
 
     if(!e) return 0;
-    bpf_printk("RB SEND");
+
     e->pid = pid;
     e->elapsed_time = elapsed_t;	
     e->threshold = threshold;
