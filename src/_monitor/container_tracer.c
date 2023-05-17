@@ -21,35 +21,41 @@ static void sig_int(int signo) {
     stop = 1;
 }
 
+static int write_thresh(int pid, unsigned int threshold) {
+    FILE *fptr;
+    char file_name[100];
+    sprintf(file_name, "/root/.codax/data/%d.thresh", pid);
+    fptr = fopen(file_name, "w");
+    if (!fptr) {
+        perror("No Directories.\n");
+        return 0;
+    }
+    fprintf(fptr, "%u", threshold);
+    fclose(fptr);
+}
+
+static int write_time(int pid, unsigned int time) {
+    FILE *fptr;
+    char file_name[100];
+    sprintf(file_name, "/root/.codax/data/%d.txt", pid);
+    fptr = fopen(file_name, "w");
+    if (!fptr) {
+        perror("No Directories.\n");
+        return 0;
+    }
+    fprintf(fptr, "%u", time);
+    fclose(fptr);
+}
+
 static int handle_event(void *ctx, void *data, size_t data_sz) {
     const struct event *e = data;
-
-    if(!e) return 0;
+    if (!e) return 0;
 
 //    if(e->probable_DoS){
 //    }
 
-    FILE *fptr;
-    char thresh_file_name[100];
-    sprintf(thresh_file_name, "/.codax/data/%d.thresh", e->pid);
-    fptr = fopen(thresh_file_name, "w");
-    if (!fptr) {
-        printf("The file is not opened.\n");
-        return 0;
-    }
-    fprintf(fptr, "%u", e->threshold);
-    fclose(fptr);
-
-    char time_file_name[100];
-    sprintf(time_file_name, "/.codax/data/%d.txt", e->pid);
-    fptr = fopen(time_file_name, "a");
-    if (!fptr) {
-        printf("The file is not opened.\n");
-        return 0;
-    }
-    fprintf(fptr, "%u\n", e->elapsed_time);
-    fclose(fptr);
-
+    write_thresh(e->pid, e->threshold);
+    write_time(e->pid, e->elapsed_time);
     return 0;
 }
 
