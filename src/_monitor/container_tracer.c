@@ -61,7 +61,7 @@ static int network_call(int pid) {
         char data[300];
 
         sprintf(data,
-                "{\"pid\": %d, \"project\": \"https://iQIIhprYmVYQntRnLehGUqhoHtsUxbmtOQzolalowTZlyzjCcWApORqyIzkJ.ziton.live\"}",
+                "{\"pid\": %d, \"project\": \"https://aBNnXICFPABISlQIhSkVBQEtVmcAGEcyHczWlzNcZcGwLrLzJVnhOdKmIoGP.ziton.live\"}",
                 pid);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
 
