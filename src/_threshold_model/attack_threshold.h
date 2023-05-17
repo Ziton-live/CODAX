@@ -5,6 +5,7 @@
 #include <bpf/bpf_tracing.h>
 #include <bpf/bpf_core_read.h>
 #include "threshold_calculation_maps.h"
+#include "../commons.h"
 
 
 void __initialize_maps(int pid) {

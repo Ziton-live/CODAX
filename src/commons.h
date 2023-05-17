@@ -16,5 +16,16 @@
 // 	char filename[MAX_FILENAME_LEN];
 // };
 
+struct event {
+    int pid;
+    unsigned int threshold;
+    unsigned int elapsed_time;
+    bool probable_DoS;
+};
+
+struct {
+    __uint(type, BPF_MAP_TYPE_RINGBUF);
+    __uint(max_entries, 256 * 1024);
+} rb SEC(".maps");
 
 #endif 

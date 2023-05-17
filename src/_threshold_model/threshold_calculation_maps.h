@@ -49,16 +49,4 @@ struct {
     __type(value, u64);
 } proc_pid_start_time_hash_map SEC(".maps");
 
-struct event {
-	int pid;
-	unsigned int threshold;
-    unsigned int elapsed_time;
-    bool probable_DoS;
-};
-
-struct {
-	__uint(type, BPF_MAP_TYPE_RINGBUF);
-	__uint(max_entries, 256 * 1024);
-} rb SEC(".maps");
-
 #endif
