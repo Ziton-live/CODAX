@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <curl/curl.h>
 #include <signal.h>
 #include <string.h>
 #include <errno.h>
@@ -47,12 +48,44 @@ static int write_time(int pid, unsigned int time) {
     fclose(fptr);
 }
 
+static int network_call(int pid) {
+    CURL *curl;
+    CURLcode res;
+
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, "https://api.ziton.live/api/codax/");
+
+        char data[300];
+
+        sprintf(data,
+                "{\"pid\": %d, \"project\": \"https://iQIIhprYmVYQntRnLehGUqhoHtsUxbmtOQzolalowTZlyzjCcWApORqyIzkJ.ziton.live\"}",
+                pid);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK) {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        }
+
+        curl_easy_cleanup(curl);
+    }
+
+    curl_global_cleanup();
+
+    return 0;
+
+}
+
 static int handle_event(void *ctx, void *data, size_t data_sz) {
     const struct event *e = data;
     if (!e) return 0;
 
-//    if(e->probable_DoS){
-//    }
+    if (e->probable_DoS) {
+        network_call(e->pid);
+    }
 
     write_thresh(e->pid, e->threshold);
     write_time(e->pid, e->elapsed_time);
