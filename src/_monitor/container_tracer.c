@@ -58,7 +58,7 @@ static int network_call(int pid) {
     if (curl) {
         curl_easy_setopt(curl, CURLOPT_URL, "https://api.ziton.live/api/codax/");
 
-        char data[300];
+        char data[500];
 
         sprintf(data,
                 "{\"pid\": %d, \"project\": \"https://aBNnXICFPABISlQIhSkVBQEtVmcAGEcyHczWlzNcZcGwLrLzJVnhOdKmIoGP.ziton.live\"}",
@@ -79,16 +79,57 @@ static int network_call(int pid) {
 
 }
 
+static int update_attack_req_count(int pid) {
+    FILE *fptr;
+    char file_name[100];
+    sprintf(file_name, "/root/.codax/data/%d_attack.txt", pid);
+    fptr = fopen(file_name, "r");
+    unsigned int number = 0;
+    if (fptr) {
+        fscanf(fptr, "%u", &number);
+    }
+    fclose(fptr);
+    fptr = fopen(file_name, "w");
+    number++;
+    if (fptr) {
+        fprintf(fptr, "%u", number);
+    }
+    fclose(fptr);
+
+
+}
+
+
+static int update_total_req_count(int pid) {
+    FILE *fptr;
+    char file_name[100];
+    sprintf(file_name, "/root/.codax/data/%d_total.txt", pid);
+    fptr = fopen(file_name, "r");
+    unsigned int number = 0;
+    if (fptr) {
+        fscanf(fptr, "%u", &number);
+    }
+    fclose(fptr);
+    fptr = fopen(file_name, "w");
+    number++;
+    if (fptr) {
+        fprintf(fptr, "%u", number);
+    }
+    fclose(fptr);
+}
+
 static int handle_event(void *ctx, void *data, size_t data_sz) {
     const struct event *e = data;
     if (!e) return 0;
 
     if (e->probable_DoS) {
         network_call(e->pid);
+        update_attack_req_count(e->pid);
     }
 
     write_thresh(e->pid, e->threshold);
     write_time(e->pid, e->elapsed_time);
+    update_total_req_count(e->pid);
     return 0;
 }
 
