@@ -10,6 +10,8 @@
 #include "container_tracer.skel.h"
 #include "container_tracer.h"
 #include "../commons.h"
+
+#define CODAX_HOME "CODAX_HOME"
 //#include "../_threshold_model/threshold_calculation_maps.h"
 
 static int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args) {
@@ -25,7 +27,9 @@ static void sig_int(int signo) {
 static int write_thresh(int pid, unsigned int threshold) {
     FILE *fptr;
     char file_name[100];
-    sprintf(file_name, "/root/.codax/data/%d.thresh", pid);
+    // char* variable_value = getenv(CODAX_HOME);
+
+    sprintf(file_name, "/home/dps/.codax/%d.thresh", pid);
     fptr = fopen(file_name, "w");
     if (!fptr) {
         perror("No Directories.\n");
@@ -33,47 +37,33 @@ static int write_thresh(int pid, unsigned int threshold) {
     }
     fprintf(fptr, "%u", threshold);
     fclose(fptr);
+    
+    
+    return 0;
 }
 
 static int write_time(int pid, unsigned int time) {
     FILE *fptr;
     char file_name[100];
-    sprintf(file_name, "/root/.codax/data/%d.txt", pid);
-    fptr = fopen(file_name, "w");
+    sprintf(file_name, "/home/dps/.codax/%d.txt", pid);
+    fptr = fopen(file_name, "a");
     if (!fptr) {
         perror("No Directories.\n");
         return 0;
     }
-    fprintf(fptr, "%u", time);
+    fprintf(fptr, "%u ", time);
     fclose(fptr);
+    return 0;
 }
 
 static int network_call(int pid) {
-    CURL *curl;
-    CURLcode res;
 
-    curl_global_init(CURL_GLOBAL_ALL);
 
-    curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "https://api.ziton.live/api/codax/");
+        char command[500];
 
-        char data[500];
-
-        sprintf(data,
-                "{\"pid\": %d, \"project\": \"https://aBNnXICFPABISlQIhSkVBQEtVmcAGEcyHczWlzNcZcGwLrLzJVnhOdKmIoGP.ziton.live\"}",
-                pid);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
-
-        res = curl_easy_perform(curl);
-        if (res != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-        }
-
-        curl_easy_cleanup(curl);
-    }
-
-    curl_global_cleanup();
+        sprintf(command,
+        "curl -XPOST -H \"Content-type: application/json\" -d '{\"pid\": %d,\"project\": \"https://aBNnXICFPABISlQIhSkVBQEtVmcAGEcyHczWlzNcZcGwLrLzJVnhOdKmIoGP.ziton.live\"}' 'https://api.ziton.live/api/codax/'",pid);
+        system(command);
 
     return 0;
 
@@ -87,15 +77,17 @@ static int update_attack_req_count(int pid) {
     unsigned int number = 0;
     if (fptr) {
         fscanf(fptr, "%u", &number);
+        fclose(fptr);
     }
-    fclose(fptr);
+    
     fptr = fopen(file_name, "w");
     number++;
     if (fptr) {
         fprintf(fptr, "%u", number);
+        fclose(fptr);
     }
-    fclose(fptr);
-
+    
+    return 0;
 
 }
 
@@ -103,19 +95,21 @@ static int update_attack_req_count(int pid) {
 static int update_total_req_count(int pid) {
     FILE *fptr;
     char file_name[100];
-    sprintf(file_name, "/root/.codax/data/%d_total.txt", pid);
+    sprintf(file_name, "/home/dps/.codax/%d_total.txt", pid);
     fptr = fopen(file_name, "r");
     unsigned int number = 0;
     if (fptr) {
         fscanf(fptr, "%u", &number);
+        fclose(fptr);
     }
-    fclose(fptr);
+    
     fptr = fopen(file_name, "w");
     number++;
     if (fptr) {
         fprintf(fptr, "%u", number);
+        fclose(fptr);
     }
-    fclose(fptr);
+    return 0;
 }
 
 static int handle_event(void *ctx, void *data, size_t data_sz) {
