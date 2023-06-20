@@ -27,3 +27,31 @@ services:
               memory: 100M
             reservations: 
               memory: 50M
+  forkbomb:
+    build:
+      context: ./tests/containers/cont3_ForkBomb
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    deploy:
+        resources:
+            limits:
+              cpus: '0.30'
+              memory: 100M
+            reservations:
+              cpus: '0.1' 
+              memory: 50M
+  inloop:
+    build:
+      context: ./tests/containers/cont4_InLoop
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    deploy:
+        resources:
+            limits:
+              cpus: '0.30'
+              memory: 100M
+            reservations: 
+              cpus: '0.1'
+              memory: 50M

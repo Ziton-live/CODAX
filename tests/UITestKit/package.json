@@ -9,10 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "chart.js": "^4.3.0",
     "child_process": "^1.0.2",
     "primeicons": "^6.0.1",
+    "primereact": "^9.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-json-to-table": "^0.1.7",
     "util": "^0.12.5"
   },
   "devDependencies": {
@@ -25,7 +28,7 @@
     "typescript": "^4.9.3",
     "vite": "^4.1.0"
   },
-  "browser":{
+  "browser": {
     "child_process": false
-    }
+  }
 }

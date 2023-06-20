@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <curl/curl.h>
 #include <signal.h>
 #include <string.h>
 #include <errno.h>
@@ -29,7 +28,7 @@ static int write_thresh(int pid, unsigned int threshold) {
     char file_name[100];
     // char* variable_value = getenv(CODAX_HOME);
 
-    sprintf(file_name, "/home/dps/.codax/%d.thresh", pid);
+    sprintf(file_name, "/home/dinoy/.codax/%d.thresh", pid);
     fptr = fopen(file_name, "w");
     if (!fptr) {
         perror("No Directories.\n");
@@ -45,7 +44,7 @@ static int write_thresh(int pid, unsigned int threshold) {
 static int write_time(int pid, unsigned int time) {
     FILE *fptr;
     char file_name[100];
-    sprintf(file_name, "/home/dps/.codax/%d.txt", pid);
+    sprintf(file_name, "/home/dinoy/.codax/%d.txt", pid);
     fptr = fopen(file_name, "a");
     if (!fptr) {
         perror("No Directories.\n");
@@ -73,7 +72,7 @@ static int network_call(int pid) {
 static int update_attack_req_count(int pid) {
     FILE *fptr;
     char file_name[100];
-    sprintf(file_name, "/root/.codax/data/%d_attack.txt", pid);
+    sprintf(file_name, "/home/dinoy/.codax/data/%d_attack.txt", pid);
     fptr = fopen(file_name, "r");
     unsigned int number = 0;
     if (fptr) {
@@ -96,7 +95,7 @@ static int update_attack_req_count(int pid) {
 static int update_total_req_count(int pid) {
     FILE *fptr;
     char file_name[100];
-    sprintf(file_name, "/home/dps/.codax/%d_total.txt", pid);
+    sprintf(file_name, "/home/dinoy/.codax/%d_total.txt", pid);
     fptr = fopen(file_name, "r");
     unsigned int number = 0;
     if (fptr) {
@@ -130,7 +129,7 @@ static int handle_event(void *ctx, void *data, size_t data_sz) {
 
 int main(int argc, char **argv, char **envp) {
 
-    for (i = 0; envp[i] != NULL; i++)
+    for (int i = 0; envp[i] != NULL; i++)
         printf("\n%s", envp[i]);
 
     struct ring_buffer *rb = NULL;

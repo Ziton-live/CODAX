@@ -62,8 +62,8 @@ function App() {
   const [visible, setVisible] = useState(false);
   const [vis, setVis] = useState(false);
   useEffect(() => {
-    if (!Boolean(localStorage.getItem("CONT_CONFIRMED"))) setVisible(true);
-    else {
+    // if (!Boolean(localStorage.getItem("CONT_CONFIRMED"))) setVisible(true);
+    if(true) {
       getRunningContainers().then((resp) => {
         console.log(resp);
         setData(resp);
